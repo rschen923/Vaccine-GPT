@@ -1,0 +1,72 @@
+{
+  "protein": {
+    "backend": "esm2",
+    "config": {
+      "model_id": "esm2_t33_650M_UR50D",
+      "device": "auto",
+      "dtype": "float32",
+      "freeze": true,
+      "unfreeze_last_n_layers": 0
+    }
+  },
+  "dna": {
+    "backend": "dnabert2",
+    "config": {
+      "model_id": "zhihan1996/DNABERT-2-117M",
+      "device": "auto",
+      "dtype": "float32",
+      "freeze": true,
+      "trust_remote_code": true,
+      "extra": {"max_length": 512}
+    }
+  },
+  "proteome": {
+    "backend": "proteomelm",
+    "config": {
+      "model_id": "Bitbol-Lab/ProteomeLM-M",
+      "device": "auto",
+      "dtype": "float32",
+      "freeze": true,
+      "trust_remote_code": true
+    }
+  },
+  "rna": {
+    "backend": "rna_fm",
+    "config": {
+      "model_id": "rna_fm_t12",
+      "device": "auto",
+      "dtype": "float32",
+      "freeze": true,
+      "trust_remote_code": true
+    }
+  },
+  "evo2": {
+    "backend": "evo2",
+    "config": {
+      "model_id": "evo2_7b",
+      "device": "auto",
+      "dtype": "bfloat16",
+      "freeze": true,
+      "extra": {"layer_name": "blocks.28.mlp.l3"}
+    }
+  },
+  "clef": {
+    "backend": "clef",
+    "module_name": "CLEF",
+    "class_name": "clef_enc",
+    "config": {
+      "model_id": "CLEF-local",
+      "local_path": "weights/clef/checkpoint.pt",
+      "device": "auto",
+      "dtype": "float32",
+      "freeze": true,
+      "extra": {
+        "init_kwargs": {
+          "num_embeds": 1280,
+          "num_hiddens": 128,
+          "finial_drop": 0.1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "policy": {
+    "original_weights_are_inputs_not_repository_artifacts": true,
+    "never_overwrite_upstream_checkpoints": true,
+    "record_sha256_and_source_revision": true,
+    "default_upstream_requires_grad": false
+  },
+  "upstream_weights": [
+    {
+      "name": "CLEF",
+      "source": "https://github.com/PengYueECUST1997/CLEF",
+      "local_path": "external/CLEF",
+      "role": "protein_encoder_alignment_anchor",
+      "status": "path_required",
+      "trainable": false
+    },
+    {
+      "name": "ESM-2",
+      "source": "https://github.com/facebookresearch/esm",
+      "checkpoint": "esm2_t33_650M_UR50D",
+      "role": "protein_residue_embedding",
+      "status": "loaded_by_fair_es m",
+      "trainable": false
+    },
+    {
+      "name": "DNABERT-2",
+      "source": "https://github.com/Zjunlp/DNABERT_2",
+      "checkpoint": "zhihan1996/DNABERT-2-117M",
+      "role": "DNA_embedding",
+      "status": "loaded_by_transformers",
+      "trainable": false
+    },
+    {
+      "name": "ProteomeLM",
+      "source": "https://github.com/Bitbol-Lab/ProteomeLM",
+      "checkpoint": "Bitbol-Lab/ProteomeLM-M",
+      "role": "proteome_context_embedding",
+      "status": "loaded_by_transformers",
+      "trainable": false
+    },
+    {
+      "name": "Evo2",
+      "source": "https://github.com/arcinstitute/evo2",
+      "checkpoint": "evo2_7b_base",
+      "role": "DNA_or_RNA_fallback_embedding",
+      "status": "loaded_by_evo2_in_linux_or_wsl2",
+      "trainable": false
+    },
+    {
+      "name": "RNA-FM",
+      "source": "https://github.com/AnacletoLAB/miRInter-Trans",
+      "role": "RNA_embedding_reference",
+      "status": "reference_only_until_a_verified_checkpoint_and_loader_are_selected",
+      "trainable": false
+    }
+  ]
+}

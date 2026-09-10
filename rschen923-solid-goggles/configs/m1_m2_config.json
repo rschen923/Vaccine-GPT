@@ -1,0 +1,33 @@
+{
+  "lineage": {
+    "model_version": "M1M2-GIC-SDE-0.1.0",
+    "feature_version": "FEAT-0.1.0",
+    "label_version": "LABEL-0.1.0",
+    "batch_id": "B2026-09"
+  },
+  "m1": {
+    "view_dims": {
+      "protein": 256,
+      "dna": 192,
+      "rna": 160,
+      "omics": 128
+    },
+    "latent_dim": 128,
+    "num_relations": 7,
+    "epochs": 12,
+    "batch_size": 64,
+    "learning_rate": 1e-3
+  },
+  "m2": {
+    "input_dim": 128,
+    "hidden_dim": 64,
+    "epochs": 12,
+    "batch_size": 64,
+    "learning_rate": 1e-3
+  },
+  "fallback": {
+    "cache_feature_mode": true,
+    "use_external_models": false,
+    "external_model_note": "If ESM-2 / DNABERT-2 / RNA-FM / ProteomeLM are unavailable, switch to cached feature mode and keep the same schema for downstream training."
+  }
+}

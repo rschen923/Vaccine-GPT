@@ -1,0 +1,14 @@
+# Optional production adapters. Install only in the environment used for feature extraction.
+fair-esm>=2.0.0
+transformers>=4.40.0
+safetensors>=0.4.0
+accelerate>=0.30.0
+# RNA-FM upstream package; alternatively install the ml4bio/RNA-FM repository.
+rna-fm>=0.1.1
+
+# Evo2 has a CUDA/Linux/WSL2-oriented runtime and is intentionally separate from
+# the CPU-compatible base requirements.
+# Install from the upstream project after selecting a compatible CUDA/PyTorch stack:
+# pip install evo2
+# Optional RNA-FM-compatible Hugging Face loader:
+# install the RNA-FM checkpoint's published package/model revision separately.

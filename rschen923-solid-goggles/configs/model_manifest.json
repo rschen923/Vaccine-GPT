@@ -1,0 +1,45 @@
+{
+  "policy": {
+    "pretrained_weights_are_initialization": true,
+    "default_freeze": true,
+    "fine_tune_only_after_downstream_split": true
+  },
+  "models": {
+    "clef": {
+      "source": "PengYueECUST1997/CLEF",
+      "checkpoint": "weights/clef/checkpoint.pt",
+      "role": "protein_alignment_anchor",
+      "trainable_by_default": false
+    },
+    "esm2": {
+      "source": "facebookresearch/esm",
+      "loader": "esm.pretrained.esm2_t33_650M_UR50D",
+      "role": "protein_token_embedding",
+      "trainable_by_default": false
+    },
+    "dnabert2": {
+      "source": "zhihan1996/DNABERT-2-117M",
+      "loader": "transformers.AutoModel.from_pretrained",
+      "role": "DNA_embedding",
+      "trainable_by_default": false
+    },
+    "proteomelm": {
+      "source": "Bitbol-Lab/ProteomeLM-M",
+      "loader": "transformers.AutoModel.from_pretrained",
+      "role": "proteome_context_embedding",
+      "trainable_by_default": false
+    },
+    "evo2": {
+      "source": "arcinstitute/evo2",
+      "loader": "evo2.Evo2",
+      "role": "alternative_DNA_embedding",
+      "trainable_by_default": false
+    },
+    "rna_fm": {
+      "source": "ml4bio/RNA-FM",
+      "loader": "fm.pretrained.rna_fm_t12",
+      "role": "ncRNA_embedding",
+      "trainable_by_default": false
+    }
+  }
+}

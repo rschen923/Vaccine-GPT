@@ -1,0 +1,8 @@
+model_version: M1M2-GIC-SDE-0.1.0
+feature_version: FEAT-0.1.0
+label_version: LABEL-0.1.0
+batch_id: B2026-09
+compatible: true
+notes:
+  - "Local smoke prototype is intentionally versioned and frozen before full external-data deployment."
+  - "When external models are unavailable, cached features remain compatible with the same schema."

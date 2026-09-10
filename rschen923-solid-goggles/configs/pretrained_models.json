@@ -1,0 +1,63 @@
+{
+  "weights_policy": {
+    "preserve_original": true,
+    "freeze_upstream_by_default": true,
+    "fine_tune_requires_explicit_override": true,
+    "local_cache_root": "model_cache"
+  },
+  "adapters": {
+    "protein_esm2": {
+      "family": "esm2",
+      "model_id": "esm2_t33_650M_UR50D",
+      "source": "facebookresearch/esm",
+      "layer": 33,
+      "frozen": true
+    },
+    "protein_proteomelm": {
+      "family": "proteomelm",
+      "model_id": "Bitbol-Lab/ProteomeLM-M",
+      "source": "Bitbol-Lab/ProteomeLM",
+      "frozen": true
+    },
+    "protein_esm2_proteomelm": {
+      "family": "protein_dual",
+      "source": "facebookresearch/esm + Bitbol-Lab/ProteomeLM",
+      "frozen": true,
+      "esm2": {
+        "model_id": "esm2_t33_650M_UR50D",
+        "layer": 33
+      },
+      "proteomelm": {
+        "model_id": "Bitbol-Lab/ProteomeLM-M"
+      }
+    },
+    "dna_dnabert2": {
+      "family": "dnabert2",
+      "model_id": "zhihan1996/DNABERT-2-117M",
+      "source": "Zjunlp/DNABERT_2",
+      "frozen": true,
+      "max_length": 1024
+    },
+    "dna_evo2": {
+      "family": "evo2",
+      "model_id": "evo2_7b_base",
+      "source": "arcinstitute/evo2",
+      "layer_name": "blocks.28.mlp.l3",
+      "frozen": true
+    },
+    "rna_evo2": {
+      "family": "evo2",
+      "model_id": "evo2_7b_base",
+      "source": "arcinstitute/evo2",
+      "layer_name": "blocks.28.mlp.l3",
+      "frozen": true,
+      "input_alphabet": "ACGT"
+    },
+    "rna_rnafm_reference": {
+      "family": "transformers",
+      "model_id": "rna-fm",
+      "source": "AnacletoLAB/miRInter-Trans",
+      "status": "reference_only_not_loaded"
+    }
+  }
+}
