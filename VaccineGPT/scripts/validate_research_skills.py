@@ -14,7 +14,7 @@ REQUIRED = {
 
 
 def main() -> None:
-    root = Path(__file__).resolve().parents[1] / "skills"
+    root = Path(__file__).resolve().parents[2] / "skill"
     failures = []
     for filename, terms in REQUIRED.items():
         text = (root / filename).read_text(encoding="utf-8")

@@ -1,8 +1,8 @@
 # VaccineGPT integrated research skills
 
 This directory distills the local research skills into reusable, testable
-workflows. The skills are intentionally repository-local so that searches,
-downloads, analyses, and generated reports can be versioned with the model.
+workflows. It is intentionally at the repository root, beside `reference/`,
+so research workflows remain reusable without being mixed with model code.
 
 ## Included skills
 

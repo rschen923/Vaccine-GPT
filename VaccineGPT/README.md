@@ -188,10 +188,10 @@ python scripts/build_sra_tasks.py `
 
 ## Research skills and project analysis
 
-The distilled research workflows are in `skills/`: literature retrieval and
-download, evidence-aware review writing, NSFC project design, academic
-Markdown/PPT/figure generation, and an integrated resumable pipeline. Validate
-their required quality gates with:
+The distilled research workflows are in the repository-level `../skill/`
+directory: literature retrieval and download, evidence-aware review writing,
+NSFC project design, academic Markdown/PPT/figure generation, and an
+integrated resumable pipeline. Validate their required quality gates with:
 
 ```powershell
 python scripts/validate_research_skills.py
