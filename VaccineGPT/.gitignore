@@ -10,3 +10,10 @@ venv/
 checkpoints/
 logs/
 artifacts/
+data/raw/
+data/processed/public/
+data/processed/public_final/
+data_download/
+tools/datasets.exe
+tools/
+data/raw/*.partial

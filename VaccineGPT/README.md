@@ -111,11 +111,20 @@ distribution.
 ## Public-data acquisition and preparation
 
 `configs/data_sources.json` is a versioned source manifest. It supports the
-official NCBI `datasets` CLI and HTTP downloads, computes SHA256 checksums, and
-writes `data/metadata/download_manifest.json`. Sources requiring an export
-selection, login, license confirmation, or raw-read processing remain disabled
-until their exact release URL and terms are recorded; enabling a web page URL
-would be unsafe because it can silently save HTML instead of data.
+official NCBI `datasets` CLI, resumable HTTP downloads, VFDB/IEDB/STRING
+release endpoints, and SRA Toolkit accessions. It computes SHA256 checksums,
+rejects suspicious HTML/empty responses, and writes
+`data/metadata/download_manifest.json`. Authentication, license, endpoint, or
+resource failures are recorded explicitly as failed results.
+
+Large downloaded raw datasets are intentionally excluded from Git tracking.
+Their URLs, checksums, byte counts, and failure status remain in
+`data/metadata/download_manifest.json`; rerun the downloader to restore them.
+After moving the workspace, verify every recorded local artifact with:
+
+```powershell
+python scripts/check_data_artifacts.py
+```
 
 ```powershell
 python scripts/download_public_data.py --config configs/data_sources.json
@@ -139,6 +148,69 @@ records, and creates a stratified group split. It never up-samples duplicate
 biological records. Instead, training can use effective-number class weights
 and tier reliability weights so rare but high-quality L1 examples are not
 discarded or drowned by L4 pseudo-labels.
+
+For source-specific evidence mapping, use the label builder. Unmappable rows
+are retained in a rejected-record file and duplicate evidence is merged by
+task and tier:
+
+```powershell
+python scripts/build_labels.py `
+  --input data/raw/essentiality.jsonl --task T1 --level L1 `
+  --input data/raw/vfdb.jsonl --task T2 --level L1 `
+  --input data/raw/iedb.json --task T3 --level L2 `
+  --lineage lineage/lineage.json `
+  --output data/processed/labels.jsonl
+```
+
+Audit normalized outputs and build a training manifest:
+
+```powershell
+python scripts/audit_dataset.py `
+  --inputs data/processed/sequences.jsonl data/processed/labels.jsonl `
+  --download-manifest data/metadata/download_manifest.json `
+  --split-manifest data/processed/split_manifest.json
+
+python scripts/build_training_manifest.py `
+  --sequences data/processed/sequences.jsonl `
+  --labels data/processed/labels.jsonl `
+  --splits data/processed/split_manifest.json `
+  --output data/processed/training_manifest.json
+```
+
+For SRA experiments, create explicit processing tasks after raw reads and a
+reference index are available:
+
+```powershell
+python scripts/build_sra_tasks.py `
+  --accessions data/metadata/sra_accessions.txt `
+  --reference references/pathogen_index
+```
+
+## Research skills and project analysis
+
+The distilled research workflows are in `skills/`: literature retrieval and
+download, evidence-aware review writing, NSFC project design, academic
+Markdown/PPT/figure generation, and an integrated resumable pipeline. Validate
+their required quality gates with:
+
+```powershell
+python scripts/validate_research_skills.py
+```
+
+The current academic synthesis and experiment plan are:
+
+- `../reference/VaccineGPT_学术综述与项目总分析.md`
+- `../reference/实验设计_E_coli_E_piscicida_组学闭环.md`
+
+Run the data self-correction gate before training:
+
+```powershell
+python scripts/self_check.py `
+  --sequences data/processed/public_final/sequences.jsonl `
+  --labels data/processed/public_final/labels.jsonl `
+  --splits data/processed/public_final/split_manifest.json `
+  --output data/metadata/public_self_check.json
+```
 
 Build the seven-relation graph after producing relation TSVs:
 

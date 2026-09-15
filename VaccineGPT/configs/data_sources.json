@@ -1,55 +1,136 @@
 {
   "download_root": "data/raw",
   "metadata_root": "data/metadata",
-  "user_agent": "VaccineGPT-data-pipeline/0.1 (research; contact: configure-email)",
+  "user_agent": "VaccineGPT-data-pipeline/0.2 (research; contact: configure-email)",
+  "retries": 3,
+  "timeout": 30,
   "sources": [
     {
       "name": "ncbi_refseq_bacteria",
       "kind": "ncbi_datasets",
-      "enabled": true,
-      "query": "taxon bacteria",
+      "enabled": false,
+      "query": "2",
       "include": ["genome", "protein", "gff3"],
       "output": "ncbi_refseq_bacteria.zip",
-      "required_external": "datasets"
+      "required_external": "tools/datasets.exe",
+      "dehydrated": true,
+      "min_bytes": 1000
+    },
+    {
+      "name": "ncbi_refseq_assembly_summary",
+      "kind": "http",
+      "enabled": true,
+      "url": "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt",
+      "output": "assembly_summary_refseq.txt",
+      "min_bytes": 1000
+    },
+    {
+      "name": "ncbi_refseq_ecoli",
+      "kind": "ncbi_datasets",
+      "enabled": true,
+      "query": "562",
+      "include": ["genome", "protein", "gff3"],
+      "output": "ncbi_refseq_ecoli.zip",
+      "required_external": "tools/datasets.exe",
+      "dehydrated": true,
+      "min_bytes": 1000
     },
     {
       "name": "uniprot_bacteria_reviewed",
+      "kind": "uniprot_search",
+      "enabled": true,
+      "url": "https://rest.uniprot.org/uniprotkb/search?format=tsv&size=500&query=%28taxonomy_id%3A2%29%20AND%20%28reviewed%3Atrue%29",
+      "output": "uniprot_bacteria_reviewed.tsv",
+      "max_pages": 10000,
+      "min_bytes": 1000
+    },
+    {
+      "name": "uniprot_bacteria_mirror",
       "kind": "http",
       "enabled": true,
-      "url": "https://rest.uniprot.org/uniprotkb/stream?format=tsv&query=%28taxonomy_id%3A2%29%20AND%20%28reviewed%3Atrue%29",
-      "output": "uniprot_bacteria_reviewed.tsv"
+      "url": "https://ftp.ebi.ac.uk/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_bacteria.dat.gz",
+      "output": "uniprot_sprot_bacteria.dat.gz",
+      "min_bytes": 1000
     },
     {
       "name": "string_links",
       "kind": "http",
-      "enabled": false,
-      "url": "https://stringdb-downloads.org/download/protein.links.v12.0/9606.protein.links.v12.0.txt.gz",
-      "output": "string_links.txt.gz",
-      "note": "Set organism-specific taxon and the licensed/current STRING release before enabling."
+      "enabled": true,
+      "url": "https://stringdb-static.org/download/protein.links.v12.5/511145.protein.links.v12.5.txt.gz",
+      "output": "511145.protein.links.v12.5.txt.gz",
+      "min_bytes": 1000
     },
     {
       "name": "iedb_mhc_ii",
-      "kind": "http",
-      "enabled": false,
-      "url": "https://www.iedb.org/database_export_v3.php",
-      "output": "iedb_export.dat",
-      "note": "Confirm current IEDB export endpoint and terms before enabling."
+      "kind": "paged_json",
+      "enabled": true,
+      "url": "https://query-api.iedb.org/epitope_search",
+      "output": "iedb_epitope_search.json",
+      "page_size": 1000,
+      "max_pages": 100000,
+      "keyset_field": "structure_id",
+      "min_bytes": 1000
     },
     {
       "name": "vfdb",
-      "kind": "manual",
-      "enabled": false,
-      "url": "http://www.mgc.ac.cn/VFs/",
-      "output": "vfdb_download_required.txt",
-      "note": "VFDB distribution path/version must be confirmed from the current release page."
+      "kind": "http",
+      "enabled": true,
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz"],
+      "output": "VFDB_setA_pro.fas.gz",
+      "min_bytes": 1000
     },
     {
-      "name": "oge_e_or_deg",
+      "name": "vfdb_annotations",
+      "kind": "http",
+      "enabled": true,
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
+      "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFs.xls.gz"],
+      "output": "VFs.xls.gz",
+      "min_bytes": 1000
+    },
+    {
+      "name": "vfdb_setB_proteins",
+      "kind": "http",
+      "enabled": true,
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
+      "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz"],
+      "output": "VFDB_setB_pro.fas.gz",
+      "min_bytes": 1000
+    },
+    {
+      "name": "vfdb_setA_nucleotides",
+      "kind": "http",
+      "enabled": true,
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
+      "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz"],
+      "output": "VFDB_setA_nt.fas.gz",
+      "min_bytes": 1000
+    },
+    {
+      "name": "regulondb",
+      "kind": "http",
+      "enabled": true,
+      "url": "https://regulondb.ccg.unam.mx/data/RegulonDB.gff3",
+      "output": "regulondb.gff3",
+      "note": "Replace URL with the current release export if the provider changes it."
+    },
+    {
+      "name": "sra_accessions",
+      "kind": "sra",
+      "enabled": true,
+      "accessions": "data/metadata/sra_accessions.txt",
+      "output": "sra_raw",
+      "required_external": "tools/sratoolkit.3.4.1-win64/bin/prefetch.exe",
+      "note": "Accessions are supplied by the project manifest; prefetch downloads raw reads."
+    },
+    {
+      "name": "ogee_or_deg",
       "kind": "manual",
-      "enabled": false,
-      "url": "https://v3.ogee.info",
-      "output": "essentiality_download_required.txt",
-      "note": "Export requires selecting the desired organisms and tables."
+      "enabled": true,
+      "url": "https://essentiality.org/",
+      "output": "essentiality_pending.txt",
+      "note": "Provider export/login may be required; replace this entry with an official release export."
     }
   ]
 }

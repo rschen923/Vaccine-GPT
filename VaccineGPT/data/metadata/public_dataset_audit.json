@@ -1,0 +1,139 @@
+{
+  "files": [
+    {
+      "path": "data\\processed\\public_final\\sequences.jsonl",
+      "records": 144715,
+      "missing_gene_id": 0,
+      "duplicate_gene_id": 0,
+      "duplicate_sequence": 0,
+      "empty_sequence": 0,
+      "tasks": {
+        "unlabelled": 144715
+      },
+      "levels": {
+        "unknown": 144715
+      }
+    },
+    {
+      "path": "data\\processed\\public_final\\labels.jsonl",
+      "records": 144715,
+      "missing_gene_id": 0,
+      "duplicate_gene_id": 0,
+      "duplicate_sequence": 0,
+      "empty_sequence": null,
+      "tasks": {
+        "T2": 30173,
+        "T3b": 114542
+      },
+      "levels": {
+        "L1": 30173,
+        "L2": 114542
+      }
+    }
+  ],
+  "downloads": [
+    {
+      "name": "ncbi_refseq_bacteria",
+      "status": "failed",
+      "error": "NCBI source requires the official `datasets` CLI in PATH"
+    },
+    {
+      "name": "uniprot_bacteria_reviewed",
+      "status": "failed",
+      "error": "The read operation timed out"
+    },
+    {
+      "name": "string_links",
+      "status": "cached",
+      "url": "https://stringdb-static.org/download/protein.links.v12.5/511145.protein.links.v12.5.txt.gz",
+      "path": "data\\raw\\511145.protein.links.v12.5.txt.gz",
+      "bytes": 4589560,
+      "sha256": "a9802df920772bea20347669c425e5ac830eb9e7c320dc773faab3994bcb84b2"
+    },
+    {
+      "name": "iedb_mhc_ii",
+      "status": "cached",
+      "url": "https://query-api.iedb.org/epitope_search",
+      "path": "data\\raw\\iedb_epitope_search.json",
+      "bytes": 522840476,
+      "sha256": "e7e7b2f2f7dd4c9cfe65dc80b4d8d39af56dda5230259b59b19492a5e35e4ee0"
+    },
+    {
+      "name": "vfdb",
+      "status": "cached",
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "path": "data\\raw\\VFDB_setA_pro.fas.gz",
+      "bytes": 1307043,
+      "sha256": "810eec30e5d5c3049e879f26ec4dbd0ea1b964b5e7409ebca086d513fe4aeb32"
+    },
+    {
+      "name": "vfdb_annotations",
+      "status": "cached",
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
+      "path": "data\\raw\\VFs.xls.gz",
+      "bytes": 251771,
+      "sha256": "d8f3ffcbd5acb0e1b42bd9a965a139fc8103f278d0c27a9219e134e169cb1aab"
+    },
+    {
+      "name": "vfdb_setB_proteins",
+      "status": "cached",
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
+      "path": "data\\raw\\VFDB_setB_pro.fas.gz",
+      "bytes": 5644896,
+      "sha256": "480ef7ac852f76f5bd9d88e8967b38a4ce1e50d905f6a3595beac1e3a2b6386e"
+    },
+    {
+      "name": "vfdb_setA_nucleotides",
+      "status": "cached",
+      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
+      "path": "data\\raw\\VFDB_setA_nt.fas.gz",
+      "bytes": 2010277,
+      "sha256": "27fece9c36735ca19c435051e431102be181533017da1aef6f7a37cfda9d24ae"
+    },
+    {
+      "name": "regulondb",
+      "status": "cached",
+      "url": "https://regulondb.ccg.unam.mx/data/RegulonDB.gff3",
+      "path": "data\\raw\\regulondb.gff3",
+      "bytes": 1653,
+      "sha256": "dffe340c9aff1951c7d5172899bf945c33f52b6cc6db073ed4fad11c078c4ae9"
+    },
+    {
+      "name": "sra_accessions",
+      "status": "failed",
+      "error": "SRA source requires NCBI SRA Toolkit (`prefetch`) in PATH"
+    },
+    {
+      "name": "ogee_or_deg",
+      "status": "pending",
+      "url": "https://essentiality.org/",
+      "note": "Provider export/login may be required; replace this entry with an official release export."
+    }
+  ],
+  "download_failures": [
+    {
+      "name": "ncbi_refseq_bacteria",
+      "status": "failed",
+      "error": "NCBI source requires the official `datasets` CLI in PATH"
+    },
+    {
+      "name": "uniprot_bacteria_reviewed",
+      "status": "failed",
+      "error": "The read operation timed out"
+    },
+    {
+      "name": "sra_accessions",
+      "status": "failed",
+      "error": "SRA source requires NCBI SRA Toolkit (`prefetch`) in PATH"
+    }
+  ],
+  "splits": {
+    "sizes": {
+      "train": 101300,
+      "validation": 21706,
+      "test": 21709
+    },
+    "duplicate_gene_ids": 0,
+    "overlap": []
+  }
+}

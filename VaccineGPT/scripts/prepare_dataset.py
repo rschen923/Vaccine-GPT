@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import json
 import sys
 from pathlib import Path
@@ -15,10 +16,37 @@ from shared.split_manifest import write_split_manifest
 
 def read_table(path: str, delimiter: str | None = None) -> list[dict]:
     source = Path(path)
-    with source.open(encoding="utf-8-sig", newline="") as handle:
+    opener = gzip.open if source.suffix == ".gz" else open
+    logical_suffix = source.with_suffix("").suffix if source.suffix == ".gz" else source.suffix
+    if logical_suffix.lower() in {".json", ".jsonl"}:
+        with opener(source, "rt", encoding="utf-8") as handle:
+            if logical_suffix.lower() == ".jsonl":
+                return [json.loads(line) for line in handle if line.strip()]
+            payload = json.load(handle)
+            return payload if isinstance(payload, list) else [payload]
+    if logical_suffix.lower() in {".fa", ".fna", ".fas", ".fasta"}:
+        records, header, sequence = [], None, []
+        with opener(source, "rt", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith(">"):
+                    if header is not None:
+                        records.append({"accession": header.split()[0], "sequence": "".join(sequence)})
+                    header, sequence = line[1:], []
+                else:
+                    sequence.append(line)
+        if header is not None:
+            records.append({"accession": header.split()[0], "sequence": "".join(sequence)})
+        return records
+    with opener(source, "rt", encoding="utf-8-sig", newline="") as handle:
         sample = handle.read(4096)
         handle.seek(0)
-        dialect = csv.Sniffer().sniff(sample, delimiters=delimiter or ",\t")
+        try:
+            dialect = csv.Sniffer().sniff(sample, delimiters=delimiter or ",\t;")
+        except csv.Error:
+            dialect = csv.excel_tab if "\t" in sample else csv.excel
         return list(csv.DictReader(handle, dialect=dialect))
 
 
@@ -39,7 +67,11 @@ def normalize_sequences(input_path: str, output_path: str) -> list[dict]:
         if not protein and not dna:
             continue
         sequence = protein or dna
-        alphabet = "ACDEFGHIKLMNPQRSTVWY" if protein else "ACGTN"
+        if protein:
+            alphabet = "ACDEFGHIKLMNPQRSTVWY"
+        else:
+            raw = str(dna).upper()
+            alphabet = "ACGTN" if set(raw.replace("-", "").replace(" ", "")) <= set("ACGTN") else "ACDEFGHIKLMNPQRSTVWY"
         key = sequence_key(sequence, alphabet)
         if key in seen:
             continue
@@ -66,6 +98,8 @@ def normalize_labels(
     for path in input_paths:
         for row in read_table(path):
             task = value(row, "task")
+            if task == "T3":
+                task = "T3b"
             level = value(row, "level", required=False) or "L2"
             record = {
                 "gene_id": value(row, "gene_id", "locus_tag", "protein_id", "accession"),
@@ -97,9 +131,12 @@ def main() -> None:
     output = Path(args.output_dir)
     sequence_records = normalize_sequences(args.sequences, output / "sequences.jsonl")
     label_records = normalize_labels(args.labels, output / "labels.jsonl", args.lineage)
+    label_levels = {}
+    for label in label_records:
+        label_levels.setdefault(label["gene_id"], label.get("level", "unknown"))
     records_for_split = [
         {"gene_id": record["gene_id"], "group_id": record.get("operon_id") or record.get("contig_id") or record["gene_id"],
-         "stratum": next((label["level"] for label in label_records if label["gene_id"] == record["gene_id"]), "unknown")}
+         "stratum": label_levels.get(record["gene_id"], "unknown")}
         for record in sequence_records
     ]
     write_split_manifest(records_for_split, output / "split_manifest.json")

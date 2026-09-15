@@ -1,0 +1,33 @@
+{
+  "status": "pass",
+  "sequence_count": 144715,
+  "label_count": 144715,
+  "task_counts": {
+    "T2": 30173,
+    "T3b": 114542
+  },
+  "level_counts": {
+    "L1": 30173,
+    "L2": 114542
+  },
+  "issues": [],
+  "split": {
+    "sizes": {
+      "train": 101300,
+      "validation": 21706,
+      "test": 21709
+    },
+    "overlap_pairs": {}
+  },
+  "recommendations": [
+    "continue with current split and record this audit in the checkpoint lineage"
+  ],
+  "training_policy": {
+    "drop_duplicates": true,
+    "use_effective_number_weights": true,
+    "use_evidence_tier_weights": true,
+    "augment_sequences": false,
+    "repeated_grouped_cv": false,
+    "require_manual_review": false
+  }
+}

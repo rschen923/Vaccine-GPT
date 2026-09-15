@@ -13,8 +13,9 @@ from shared.download import run_download_manifest
 def main() -> None:
     parser = argparse.ArgumentParser(description="Download enabled public data sources reproducibly")
     parser.add_argument("--config", default="configs/data_sources.json")
+    parser.add_argument("--only", nargs="+", help="download only named sources")
     args = parser.parse_args()
-    print(json.dumps(run_download_manifest(args.config), indent=2))
+    print(json.dumps(run_download_manifest(args.config, only=args.only), indent=2))
 
 
 if __name__ == "__main__":

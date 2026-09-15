@@ -1,0 +1,88 @@
+{
+  "manifest": "data\\metadata\\download_manifest.json",
+  "checked": [
+    {
+      "name": "ncbi_refseq_assembly_summary",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\assembly_summary_refseq.txt",
+      "exists": true,
+      "bytes": 245861078,
+      "sha256": "55d8cff33194b085d9ab14c4e1da9f92d32a42d06545e4223734822f2b160759",
+      "checksum_matches": true
+    },
+    {
+      "name": "uniprot_bacteria_mirror",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\uniprot_sprot_bacteria.dat.gz",
+      "exists": true,
+      "bytes": 227343358,
+      "sha256": "f3fc9908a52f9be59b36efcda912d52d3c00e4e531d33b0e24b62dd0ddbdd029",
+      "checksum_matches": true
+    },
+    {
+      "name": "string_links",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\511145.protein.links.v12.5.txt.gz",
+      "exists": true,
+      "bytes": 4589560,
+      "sha256": "a9802df920772bea20347669c425e5ac830eb9e7c320dc773faab3994bcb84b2",
+      "checksum_matches": true
+    },
+    {
+      "name": "iedb_mhc_ii",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\iedb_epitope_search.json",
+      "exists": true,
+      "bytes": 522840476,
+      "sha256": "e7e7b2f2f7dd4c9cfe65dc80b4d8d39af56dda5230259b59b19492a5e35e4ee0",
+      "checksum_matches": true
+    },
+    {
+      "name": "vfdb",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\VFDB_setA_pro.fas.gz",
+      "exists": true,
+      "bytes": 1307043,
+      "sha256": "810eec30e5d5c3049e879f26ec4dbd0ea1b964b5e7409ebca086d513fe4aeb32",
+      "checksum_matches": true
+    },
+    {
+      "name": "vfdb_annotations",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\VFs.xls.gz",
+      "exists": true,
+      "bytes": 251771,
+      "sha256": "d8f3ffcbd5acb0e1b42bd9a965a139fc8103f278d0c27a9219e134e169cb1aab",
+      "checksum_matches": true
+    },
+    {
+      "name": "vfdb_setB_proteins",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\VFDB_setB_pro.fas.gz",
+      "exists": true,
+      "bytes": 5644896,
+      "sha256": "480ef7ac852f76f5bd9d88e8967b38a4ce1e50d905f6a3595beac1e3a2b6386e",
+      "checksum_matches": true
+    },
+    {
+      "name": "vfdb_setA_nucleotides",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\VFDB_setA_nt.fas.gz",
+      "exists": true,
+      "bytes": 2010277,
+      "sha256": "27fece9c36735ca19c435051e431102be181533017da1aef6f7a37cfda9d24ae",
+      "checksum_matches": true
+    },
+    {
+      "name": "regulondb",
+      "status": "cached",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\regulondb.gff3",
+      "exists": true,
+      "bytes": 1653,
+      "sha256": "dffe340c9aff1951c7d5172899bf945c33f52b6cc6db073ed4fad11c078c4ae9",
+      "checksum_matches": true
+    }
+  ],
+  "missing": [],
+  "checksum_failures": []
+}

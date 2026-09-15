@@ -121,6 +121,66 @@ entries until their URLs, terms, and processing parameters are fixed.
 The pipeline intentionally does not claim that downloading raw reads equals
 having gene-level Tn-seq/CRISPRi measurements.
 
+## Public-data pipeline implementation
+
+- The source manifest attempts official NCBI, UniProt, STRING v12.5, IEDB
+  PostgREST, VFDB release files, RegulonDB export, and SRA Toolkit downloads.
+  Each result records status, byte count, SHA256, and errors.
+- HTTP downloads are resumable through `.partial` files, retried, and checked
+  for minimum size and obvious HTML/content mismatches.
+- `scripts/audit_dataset.py` reports missing IDs, duplicate IDs/sequences,
+  empty sequences, label/task distributions, failed downloads, and split
+  overlap.
+- `scripts/build_training_manifest.py` emits a no-duplication training
+  manifest with effective-number and evidence-tier weights.
+- `scripts/build_sra_tasks.py` emits explicit fastp/Bowtie2/TRADE-seq tasks;
+  raw reads are not treated as gene-level labels until this processing step
+  produces validated effects.
+- Fixed grouped train/validation/test splits remain the primary report, with
+  repeated grouped cross-validation reserved for small-data evaluation.
+
+## 2026-09-15 public-data run
+
+- Successfully downloaded and checksummed STRING E. coli links, VFDB SetA/SetB
+  protein and nucleotide files, VFDB annotations, and a RegulonDB GFF3 export.
+- Successfully retrieved 119,000 IEDB epitope records through the PostgREST
+  endpoint using keyset pagination. The JSON cache is approximately 523 MB and
+  has a recorded SHA256 in `data/metadata/download_manifest.json`.
+- Normalization produced 144,715 unique sequence records and 144,715 reconciled
+  label records after mapping duplicate sequence labels to canonical sequence
+  representatives. The current supervised labels are T2 VFDB evidence and
+  T3b IEDB evidence; T1 essentiality remains pending source-specific exports.
+- The final grouped split contains 101,300/21,706/21,709 train/validation/test
+  records with no ID overlap. `data/metadata/public_self_check.json` reports
+  `pass`; `data/processed/public_final/training_manifest.json` is the training
+  handoff.
+- NCBI RefSeq, UniProt, and SRA were retried but remain explicitly failed:
+  NCBI Datasets and SRA Toolkit are not installed in the current environment,
+  while the UniProt endpoint timed out. OGEE/DEG remains pending because an
+  authenticated or release-specific export is required. These are not silently
+  represented as labels.
+- The repository was migrated under `D:\Vaccine-GPT\Vaccine-GPT`; downloader
+  paths are now anchored to the project directory rather than the caller's
+  current working directory. Review documents were moved to the sibling
+  top-level `reference/` directory.
+
+## 2026-09-15 migration and retry update
+
+- Added `scripts/check_data_artifacts.py` for post-migration artifact inventory
+  and checksum validation.
+- Fixed downloader edge cases: paged JSON finalization, relative path manifests,
+  local tool resolution for NCBI `datasets` and SRA `prefetch`, and compressed
+  tabular parsing in `scripts/prepare_dataset.py`.
+- Download status after retries:
+  - **Succeeded/cached**: IEDB epitope JSON, VFDB files, STRING links,
+    RegulonDB gff3, RefSeq `assembly_summary_refseq.txt`, UniProt bacterial
+    mirror (`uniprot_sprot_bacteria.dat.gz` via EBI).
+  - **Still failing in this network**: UniProt REST stream/search endpoint
+    (timeout/SSL EOF).
+  - **SRA**: toolkit installed (`tools/sratoolkit.3.4.1-win64/bin/prefetch.exe`);
+    one small E. coli accession (`DRR063436`) was started but stalled during
+    HTTPS transfer in this environment.
+
 ## Weight and environment boundary
 
 The code paths for all requested pretrained models are implemented and lazy,
