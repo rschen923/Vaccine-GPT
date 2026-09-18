@@ -186,6 +186,42 @@ python scripts/build_sra_tasks.py `
   --reference references/pathogen_index
 ```
 
+## New L0--L4 architecture
+
+The new implementation in `vaccinegpt/` leaves historical `src_m1/` and
+`src_m2/` untouched. It wires the specified CLEF dual encoder, VIB latents,
+L1--L4 physiological modules, detached layer coupling, analytical consistency
+losses, and T1/T2/T3/T4 task objectives. Synthetic data is exclusively for
+software smoke testing and does not provide biological-performance evidence.
+
+### Training data contract
+
+`--data` accepts a JSONL file containing exactly one batch object. Array
+nesting represents tensor dimensions. Every field in
+`vaccinegpt.contracts.REQUIRED_FIELDS` is mandatory and finite, including
+`x_a (B,L,64)`, `x_b (B,32)`, `pcd_A (B,4)`, `ch_covariates (B,16)`,
+`topo_feat (B,4)`, PPI tensors, PU indices, HLA frequencies, peptide/pseudo
+features, labels, and population observations. The loader explicitly rejects
+missing or malformed values; data adapters must derive fields before training.
+Shard multi-batch data and train each shard independently.
+
+From `VaccineGPT/`, prepare the environment with `pip install -r
+requirements.txt`, then run:
+
+```powershell
+python train.py --smoke
+python train.py --epochs 8 --stage-epochs 1
+python train.py --data path\to\contract_batch.jsonl --epochs 8 --stage-epochs 1 --checkpoint checkpoints\five_layer.pt
+python verification\verify_math.py
+python verification\verify_l4.py
+```
+
+The curriculum is L0, L1, L2, L3, L4, then joint training. Inter-layer states
+are detached, and the primary L3-to-L4 route is `tau_TI -> v0`; alpha coupling
+is disabled by default. Euler is the default differentiable ODE backend
+(`steps=1000`, `dt=0.02`); `dopri5` needs optional `torchdiffeq` and reports a
+clear installation error when absent.
+
 ## Research skills and project analysis
 
 The distilled research workflows are in the repository-level `../skill/`
