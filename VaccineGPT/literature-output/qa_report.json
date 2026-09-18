@@ -1,0 +1,104 @@
+{
+  "record_count": 4426,
+  "duplicate_keys": [],
+  "invalid_dates": [],
+  "missing_provenance": [],
+  "screening": {
+    "records": 4426,
+    "included": 72,
+    "uncertain": 4354,
+    "excluded": 0
+  },
+  "quotas": {
+    "ok": false,
+    "sections": {
+      "mechanistic_ode_dynamics": {
+        "included": 0,
+        "reviews": 0,
+        "research": 0,
+        "minimum": 20,
+        "ok": false
+      },
+      "stochastic_and_population_models": {
+        "included": 7,
+        "reviews": 1,
+        "research": 6,
+        "minimum": 20,
+        "ok": false
+      },
+      "representation_learning_and_foundation_models": {
+        "included": 10,
+        "reviews": 0,
+        "research": 10,
+        "minimum": 20,
+        "ok": false
+      },
+      "graph_learning_and_ppi": {
+        "included": 10,
+        "reviews": 0,
+        "research": 10,
+        "minimum": 20,
+        "ok": false
+      },
+      "multi_task_uncertainty_and_calibration": {
+        "included": 0,
+        "reviews": 0,
+        "research": 0,
+        "minimum": 20,
+        "ok": false
+      },
+      "pu_learning_and_ranking": {
+        "included": 11,
+        "reviews": 1,
+        "research": 10,
+        "minimum": 20,
+        "ok": false
+      },
+      "vaccine_immunology_and_antigen_design": {
+        "included": 2,
+        "reviews": 0,
+        "research": 2,
+        "minimum": 20,
+        "ok": false
+      },
+      "host_pathogen_and_virulence": {
+        "included": 12,
+        "reviews": 0,
+        "research": 12,
+        "minimum": 20,
+        "ok": false
+      },
+      "omics_and_public_data_resources": {
+        "included": 11,
+        "reviews": 0,
+        "research": 11,
+        "minimum": 20,
+        "ok": false
+      },
+      "experimental_validation_and_reproducibility": {
+        "included": 9,
+        "reviews": 2,
+        "research": 7,
+        "minimum": 20,
+        "ok": false
+      }
+    },
+    "failed_sections": [
+      "mechanistic_ode_dynamics",
+      "stochastic_and_population_models",
+      "representation_learning_and_foundation_models",
+      "graph_learning_and_ppi",
+      "multi_task_uncertainty_and_calibration",
+      "pu_learning_and_ranking",
+      "vaccine_immunology_and_antigen_design",
+      "host_pathogen_and_virulence",
+      "omics_and_public_data_resources",
+      "experimental_validation_and_reproducibility"
+    ],
+    "date_window": [
+      "2024-09-19",
+      "2026-09-19"
+    ]
+  },
+  "ok": false
+}

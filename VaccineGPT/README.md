@@ -1,12 +1,14 @@
 # Vaccine-GPT
 
-This repository hosts the M1 (GIC) and M2 (SDE) implementation scaffold for the Vaccine-GPT project.
+This repository hosts the L0-L4 five-layer Vaccine-GPT implementation.
+The historical M1/M2 prototype is retained under `legacy/` for provenance only.
 
 ## Scope
 
-- M1: multi-view representation learning and integration
-- M2: multi-task prediction + ranking for vaccine candidate evaluation
-- Shared lineage and operational contracts for later modules
+- L0-L4: graph-aware representation, biological prediction, immune modeling,
+  attenuation ranking, and reproducible training contracts
+- Explicit task masks for partially observed public labels
+- Shared lineage and operational contracts
 
 ## Quick start
 
@@ -15,28 +17,27 @@ This repository hosts the M1 (GIC) and M2 (SDE) implementation scaffold for the 
    ```bash
    pip install -r requirements.txt
    ```
-3. Run the M1 smoke demo:
+3. Run the five-layer smoke test:
    ```bash
-   python scripts/run_m1_demo.py
+   python train.py --smoke
    ```
-4. Run the M2 smoke demo:
+4. Run the mathematical and contract checks:
    ```bash
-   python scripts/run_m2_demo.py
+   python verification\verify_math.py
+   python verification\contract.py
    ```
-5. Run the deterministic end-to-end M1 -> M2 validation:
+5. Run a real-data pilot after canonical JSONL preparation:
    ```bash
-   python scripts/run_end_to_end.py
+   python scripts\train_five_layer_real.py `
+     --sequences data\processed\public_final\sequences.jsonl `
+     --labels data\processed\public_final\labels.jsonl
    ```
 
 ## Directory structure
 
-- `src_m1/` — M1 model logic, training, and evaluation
-- `src_m1/encoders/` — lazy adapters for ESM-2, CLEF, DNABERT-2, ProteomeLM,
-  Evo2, and configurable RNA-FM-compatible checkpoints
-- `src_m1/pipeline.py` — real-sequence foundation-model to M1 path
-- `src_m2/` — M2 model logic, training, and evaluation
-- `src_m2/metrics.py` and `src_m2/immune.py` — grouped ranking and T3 aggregation utilities
-- `src_m2/losses.py` — focal and non-negative PU loss primitives
+- `vaccinegpt/` — authoritative L0-L4 model, contract, losses, and trainer
+- `legacy/` — deprecated M1/M2 source retained for reproducibility; not a
+  supported training entry point
 - `shared/` — lineage metadata and operation checklist
 - `shared/contracts.py` and `shared/splits.py` — UDC checks and grouped leakage-safe splits
 - `configs/` — model and runtime configuration
@@ -56,49 +57,46 @@ This is deliberately documented in the code-level comments near each entry point
 
 ## Notes
 
-This is a working prototype scaffold designed for early validation and extension, not a complete production pipeline.
-It is meant to give the project a clean foundation for the subsequent modules while preserving compatibility with the CLEF-derived design logic.
+The five-layer path is a working research implementation, not a claim of
+clinical or biological validity. Every report must include label coverage,
+provenance, and the distinction between measured labels and masked tasks.
 
-The end-to-end script intentionally uses deterministic synthetic data. Its metrics
-validate tensor shapes, train/validation/test isolation, loss plumbing, artifact
-writing, and M1-to-M2 interfaces; they are not biological performance claims.
-
-For production data, replace the synthetic feature provider with UDC-02 cached
-records and provide grouped candidate IDs for T4. T3's `protein_immunogenicity`
-expects calibrated epitope scores; it does not call NetMHCIIpan or infer those
-scores without an explicit external adapter.
+The smoke path intentionally uses deterministic synthetic data. Its metrics
+validate tensor shapes and loss plumbing only. The real-data adapter consumes
+canonical public JSONL records and reports missing T1/T4 assays with masks; it
+never turns missing labels into negatives.
 
 ## Real pretrained-model workflow
 
 `configs/foundation_models.json` records the pretrained starting points. The
-adapters load original upstream weights and freeze them by default; M1
-projections, graph layers, and M2 heads are the trainable parts. Set `freeze`
+adapters load original upstream weights and freeze them by default; five-layer
+projections, graph layers, and task heads are the trainable parts. Set `freeze`
 to `false`, or use `unfreeze_last_n_layers`, only for deliberate fine-tuning.
 CLEF is loaded from a local checkpoint and can be chained after the ESM-2 token
 representation; ProteomeLM is optionally concatenated into the protein view.
 
-After installing the optional production dependencies, extract UDC-02 records:
+After installing the optional production dependencies, extract canonical records:
 
 ```powershell
-python scripts/extract_foundation_features.py `
+python legacy/scripts/extract_foundation_features.py `
   --config configs/foundation_models.json `
   --input data/sequences.jsonl `
   --output features/FEAT.1.0.0/features.jsonl `
   --lineage lineage/lineage.json
 ```
 
-Once UDC-02 pooled features and UDC-03 labels have been exported, train both
-modules without changing model code:
+The old UDC M1/M2 command remains available only under `legacy/`; new training
+uses the five-layer contract:
 
 ```powershell
-python scripts/train_from_udc.py `
-  --features features/FEAT.1.0.0/features.jsonl `
-  --labels labels/LABEL.1.0.0/labels.jsonl `
-  --genes data/gene_ids.json `
-  --track SOM `
-  --lineage lineage/lineage.json `
-  --output checkpoints/real_m1_m2.pt
+python scripts\train_five_layer_real.py `
+  --sequences data\processed\public_final\sequences.jsonl `
+  --labels data\processed\public_final\labels.jsonl `
+  --output checkpoints\real_five_layer
 ```
+
+The former UDC M1/M2 command remains at
+`legacy/scripts/train_from_udc.py` for historical reproduction only.
 
 Evo2 is supported as a DNA adapter. To use it instead of DNABERT-2, change the
 `dna.backend` field in `configs/foundation_models.json` to `evo2` and set its
@@ -188,8 +186,9 @@ python scripts/build_sra_tasks.py `
 
 ## New L0--L4 architecture
 
-The new implementation in `vaccinegpt/` leaves historical `src_m1/` and
-`src_m2/` untouched. It wires the specified CLEF dual encoder, VIB latents,
+The implementation in `vaccinegpt/` is the only supported mainline. Historical
+`src_m1/` and `src_m2/` are moved under `legacy/` and are not imported by the
+mainline. The five-layer path wires the specified VIB latents,
 L1--L4 physiological modules, detached layer coupling, analytical consistency
 losses, and T1/T2/T3/T4 task objectives. Synthetic data is exclusively for
 software smoke testing and does not provide biological-performance evidence.
@@ -221,6 +220,30 @@ are detached, and the primary L3-to-L4 route is `tau_TI -> v0`; alpha coupling
 is disabled by default. Euler is the default differentiable ODE backend
 (`steps=1000`, `dt=0.02`); `dopri5` needs optional `torchdiffeq` and reports a
 clear installation error when absent.
+
+## Evidence and report pipeline
+
+The research pipeline uses the date window `2024-09-19` through `2026-09-19`
+and records OpenAlex, PubMed, Europe PMC, and Crossref provenance. It does not
+count metadata candidates as reviewed evidence:
+
+```powershell
+python scripts\research\literature_pipeline.py self-test
+python scripts\research\literature_pipeline.py retrieve configs\literature\query_manifest.json literature-output
+python scripts\research\literature_pipeline.py compact literature-output\papers.jsonl
+python scripts\research\literature_pipeline.py screen-pending literature-output
+python scripts\research\literature_pipeline.py screen-fulltext literature-output --per-section 20
+python scripts\research\literature_pipeline.py export-citations literature-output reports\references_gbt7714.txt
+python scripts\research\literature_pipeline.py qa configs\literature\query_manifest.json literature-output
+python scripts\research\generate_reports.py --output reports --literature literature-output
+```
+
+`screen-pending` deliberately marks metadata-only records as `uncertain`.
+Full-text eligibility, evidence extraction, contradiction review, and formula
+proof classification must be completed before any paper is counted as
+included. The generated status report therefore reports the current retrieval
+count separately from the included-evidence count and fails quotas honestly.
+See `docs\research_pipeline.md` and `reports\04_formula_ledger_template.md`.
 
 ## Research skills and project analysis
 

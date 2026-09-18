@@ -1,0 +1,22 @@
+[
+  "experimental_validation_and_reproducibility:reproducible-ml",
+  "experimental_validation_and_reproducibility:vaccine-experiments",
+  "graph_learning_and_ppi:biological-graphs",
+  "graph_learning_and_ppi:ppi-graph",
+  "host_pathogen_and_virulence:host-pathogen",
+  "host_pathogen_and_virulence:virulence",
+  "mechanistic_ode_dynamics:biological-odes",
+  "mechanistic_ode_dynamics:immune-dynamics",
+  "multi_task_uncertainty_and_calibration:calibration",
+  "multi_task_uncertainty_and_calibration:multitask",
+  "omics_and_public_data_resources:microbiome",
+  "omics_and_public_data_resources:single-cell-omics",
+  "pu_learning_and_ranking:learning-to-rank",
+  "pu_learning_and_ranking:positive-unlabeled",
+  "representation_learning_and_foundation_models:multimodal-biology",
+  "representation_learning_and_foundation_models:protein-foundation",
+  "stochastic_and_population_models:sir-models",
+  "stochastic_and_population_models:stochastic-biology",
+  "vaccine_immunology_and_antigen_design:antigen-design",
+  "vaccine_immunology_and_antigen_design:epitope-prediction"
+]

@@ -22,7 +22,7 @@
     {
       "name": "string_links",
       "status": "cached",
-      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\511145.protein.links.v12.5.txt.gz",
+      "path": "D:\\Vaccine-GPT\\Vaccine-GPT\\VaccineGPT\\data\\raw\\511145.protein.links.v12.0.txt.gz",
       "exists": true,
       "bytes": 4589560,
       "sha256": "a9802df920772bea20347669c425e5ac830eb9e7c320dc773faab3994bcb84b2",

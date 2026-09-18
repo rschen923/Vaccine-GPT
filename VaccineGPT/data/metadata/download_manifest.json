@@ -1,78 +1,14 @@
 {
-  "created_at": "2026-09-15T10:45:40.043801+00:00",
-  "config": "VaccineGPT/configs/data_sources.json",
+  "created_at": "2026-09-18T23:52:19.260123+00:00",
+  "config": "configs\\data_sources.json",
   "results": [
     {
-      "name": "ncbi_refseq_assembly_summary",
-      "status": "cached",
-      "url": "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt",
-      "path": "data\\raw\\assembly_summary_refseq.txt",
-      "bytes": 245861078,
-      "sha256": "55d8cff33194b085d9ab14c4e1da9f92d32a42d06545e4223734822f2b160759"
-    },
-    {
-      "name": "uniprot_bacteria_mirror",
-      "status": "cached",
-      "url": "https://ftp.ebi.ac.uk/pub/databases/uniprot/current_release/knowledgebase/taxonomic_divisions/uniprot_sprot_bacteria.dat.gz",
-      "path": "data\\raw\\uniprot_sprot_bacteria.dat.gz",
-      "bytes": 227343358,
-      "sha256": "f3fc9908a52f9be59b36efcda912d52d3c00e4e531d33b0e24b62dd0ddbdd029"
-    },
-    {
-      "name": "string_links",
-      "status": "cached",
-      "url": "https://stringdb-static.org/download/protein.links.v12.5/511145.protein.links.v12.5.txt.gz",
-      "path": "data\\raw\\511145.protein.links.v12.5.txt.gz",
-      "bytes": 4589560,
-      "sha256": "a9802df920772bea20347669c425e5ac830eb9e7c320dc773faab3994bcb84b2"
-    },
-    {
-      "name": "iedb_mhc_ii",
-      "status": "cached",
-      "url": "https://query-api.iedb.org/epitope_search",
-      "path": "data\\raw\\iedb_epitope_search.json",
-      "bytes": 522840476,
-      "sha256": "e7e7b2f2f7dd4c9cfe65dc80b4d8d39af56dda5230259b59b19492a5e35e4ee0"
-    },
-    {
       "name": "vfdb",
-      "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "status": "downloaded",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
       "path": "data\\raw\\VFDB_setA_pro.fas.gz",
       "bytes": 1307043,
-      "sha256": "810eec30e5d5c3049e879f26ec4dbd0ea1b964b5e7409ebca086d513fe4aeb32"
-    },
-    {
-      "name": "vfdb_annotations",
-      "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
-      "path": "data\\raw\\VFs.xls.gz",
-      "bytes": 251771,
-      "sha256": "d8f3ffcbd5acb0e1b42bd9a965a139fc8103f278d0c27a9219e134e169cb1aab"
-    },
-    {
-      "name": "vfdb_setB_proteins",
-      "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
-      "path": "data\\raw\\VFDB_setB_pro.fas.gz",
-      "bytes": 5644896,
-      "sha256": "480ef7ac852f76f5bd9d88e8967b38a4ce1e50d905f6a3595beac1e3a2b6386e"
-    },
-    {
-      "name": "vfdb_setA_nucleotides",
-      "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
-      "path": "data\\raw\\VFDB_setA_nt.fas.gz",
-      "bytes": 2010277,
-      "sha256": "27fece9c36735ca19c435051e431102be181533017da1aef6f7a37cfda9d24ae"
-    },
-    {
-      "name": "regulondb",
-      "status": "cached",
-      "url": "https://regulondb.ccg.unam.mx/data/RegulonDB.gff3",
-      "path": "data\\raw\\regulondb.gff3",
-      "bytes": 1653,
-      "sha256": "dffe340c9aff1951c7d5172899bf945c33f52b6cc6db073ed4fad11c078c4ae9"
+      "sha256": "a3672295f42c940c773e63bd734000d941f4008a2f81373a9b24e2071212a6e2"
     }
   ]
 }

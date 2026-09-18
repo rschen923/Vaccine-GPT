@@ -1,0 +1,35 @@
+{
+  "schema_version": "report-manifest/v1",
+  "artifacts": [
+    {
+      "path": "01_literature_evidence_status.md",
+      "sha256": "b37280e4022cd724e863e62ee84b70b221ad75d163e089e625ce2926a0a04b43",
+      "bytes": 1833
+    },
+    {
+      "path": "02_architecture_audit.md",
+      "sha256": "3a3d94f4b7186fc184b238125ed297c6e9f1e31cc042989b032851d739db79b0",
+      "bytes": 1510
+    },
+    {
+      "path": "03_data_experiment_and_compute_plan.md",
+      "sha256": "29fefae46f85f77d8cfa8bce45ec882114c959cc9a92c87d91dbf890c09df0aa",
+      "bytes": 2351
+    },
+    {
+      "path": "04_formula_ledger_template.md",
+      "sha256": "a68975215c45585dfa79684c1da1e829991eb10c24df3cd22b8a68050f45e2de",
+      "bytes": 1034
+    },
+    {
+      "path": "formula_ledger.json",
+      "sha256": "443fdfa4ecb56fe92329fd1e4f512bca1e6c1df4366449e859a81a9864f32340",
+      "bytes": 1927
+    },
+    {
+      "path": "references_gbt7714.txt",
+      "sha256": "c3b1928a89e56abad41afee1d1cf4b267e0ae23830a17abce0640f168f4c78a1",
+      "bytes": 1178128
+    }
+  ]
+}

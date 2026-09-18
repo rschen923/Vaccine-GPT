@@ -1,0 +1,63 @@
+[
+  {
+    "id": "F-001",
+    "location": "vaccinegpt/five_layer.py:80",
+    "formula": "v0 = clip(0.80 + 0.25 * (tau_TI / 180 - 1), 0.05, 0.99)",
+    "type": "derived coupling hypothesis",
+    "assumptions": [
+      "tau_TI is finite",
+      "v0 is bounded",
+      "upstream state is detached"
+    ],
+    "evidence_status": "pending_full_text_formula_audit",
+    "biological_claim": false
+  },
+  {
+    "id": "F-002",
+    "location": "vaccinegpt/l0_clef.py:18-39",
+    "formula": "KL(q(z|x)||p(z)) with Gaussian posterior",
+    "type": "standard variational objective",
+    "assumptions": [
+      "Gaussian posterior/prior",
+      "finite log variance"
+    ],
+    "evidence_status": "implementation_checked; citation_mapping_pending",
+    "biological_claim": false
+  },
+  {
+    "id": "F-003",
+    "location": "vaccinegpt/losses.py:50-66",
+    "formula": "non-negative PU risk",
+    "type": "learning objective",
+    "assumptions": [
+      "positive class prior in (0,1)",
+      "unlabeled distribution assumptions"
+    ],
+    "evidence_status": "implementation_checked; citation_mapping_pending",
+    "biological_claim": false
+  },
+  {
+    "id": "F-004",
+    "location": "vaccinegpt/physiology.py:13-17",
+    "formula": "finite-difference ODE consistency penalty",
+    "type": "numerical regularizer",
+    "assumptions": [
+      "trajectory step is nonzero",
+      "RHS matches state convention"
+    ],
+    "evidence_status": "numerical_invariant_checked; mechanistic_validity_pending",
+    "biological_claim": false
+  },
+  {
+    "id": "F-005",
+    "location": "vaccinegpt/five_layer.py:67-88",
+    "formula": "detached graph and layer coupling",
+    "type": "optimization constraint",
+    "assumptions": [
+      "one graph per batch",
+      "detachment is intentional"
+    ],
+    "evidence_status": "gradient_boundary_checked",
+    "biological_claim": false
+  }
+]

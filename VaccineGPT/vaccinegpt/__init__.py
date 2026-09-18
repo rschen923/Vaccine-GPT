@@ -19,6 +19,7 @@ from .spec_training import load_contract_jsonl, make_synthetic_contract_batch, t
 from .config import ModelConfig, SolverConfig, TrainingDefaults
 from .coupling import bounded_alpha, detach_signal, tau_to_v0
 from .synthetic import SyntheticConfig, generate_synthetic_jsonl, make_synthetic_batch
+from .real_data import load_real_batch
 
 __all__ = [
     "JsonlValidationError",
@@ -41,4 +42,5 @@ __all__ = [
     "validate_record",
     "write_jsonl",
     "train_contract_batch",
+    "load_real_batch",
 ]

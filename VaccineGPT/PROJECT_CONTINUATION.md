@@ -123,8 +123,9 @@ having gene-level Tn-seq/CRISPRi measurements.
 
 ## Public-data pipeline implementation
 
-- The source manifest attempts official NCBI, UniProt, STRING v12.5, IEDB
-  PostgREST, VFDB release files, RegulonDB export, and SRA Toolkit downloads.
+- The source manifest attempts official NCBI, UniProt, STRING 2023 (v12.0),
+  IEDB 2024 update, VFDB 2025 release files, DEG 15, OGEE v3, RegulonDB
+  export, and SRA Toolkit downloads.
   Each result records status, byte count, SHA256, and errors.
 - HTTP downloads are resumable through `.partial` files, retried, and checked
   for minimum size and obvious HTML/content mismatches.

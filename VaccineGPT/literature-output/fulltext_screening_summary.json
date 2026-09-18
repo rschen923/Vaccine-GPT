@@ -1,0 +1,17 @@
+{
+  "checked": 180,
+  "included": 30,
+  "uncertain": 150,
+  "failed": 124,
+  "sections_checked": {
+    "stochastic_and_population_models": 20,
+    "representation_learning_and_foundation_models": 20,
+    "graph_learning_and_ppi": 20,
+    "multi_task_uncertainty_and_calibration": 20,
+    "pu_learning_and_ranking": 20,
+    "vaccine_immunology_and_antigen_design": 20,
+    "host_pathogen_and_virulence": 20,
+    "omics_and_public_data_resources": 20,
+    "experimental_validation_and_reproducibility": 20
+  }
+}
