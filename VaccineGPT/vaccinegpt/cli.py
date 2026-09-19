@@ -14,7 +14,7 @@ from .spec_training import load_contract_jsonl, make_synthetic_contract_batch, t
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vaccinegpt")
-    parser.add_argument("--smoke", action="store_true", help="run the CPU synthetic smoke test")
+    parser.add_argument("--smoke", action="store_true", help="run the authoritative five-layer contract smoke test (FiveLayerVaccineGPT); differs from the JSONL train_jsonl(...) path")
     parser.add_argument("--data", default=None, help="validated JSONL training data")
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--stage-epochs", type=int, default=1)
@@ -30,10 +30,10 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("input")
     validate.add_argument("--inference", action="store_true", help="allow labels to be omitted")
 
-    smoke = commands.add_parser("smoke", help="run a synthetic one-step training smoke test")
+    smoke = commands.add_parser("smoke", help="run the multi-view JSONL smoke test via train_jsonl(...) / VaccineGPTModel (not the five-layer contract model)")
     smoke.add_argument("--output", default=None, help="optional JSONL path to generate first")
 
-    train = commands.add_parser("train", help="train on a validated JSONL dataset")
+    train = commands.add_parser("train", help="train the multi-view JSONL model via train_jsonl(...) / VaccineGPTModel")
     train.add_argument("input")
     train.add_argument("--epochs", type=int, default=6)
     train.add_argument("--learning-rate", type=float, default=1e-3)
