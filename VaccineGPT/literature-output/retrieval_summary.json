@@ -1,0 +1,6 @@
+{
+  "retrieved_this_run": 5495,
+  "unique_papers": 4427,
+  "network_failures": 5,
+  "manifest": "configs\\literature\\query_manifest.json"
+}

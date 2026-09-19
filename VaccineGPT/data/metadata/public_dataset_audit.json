@@ -45,8 +45,8 @@
     {
       "name": "string_links",
       "status": "cached",
-      "url": "https://stringdb-static.org/download/protein.links.v12.5/511145.protein.links.v12.5.txt.gz",
-      "path": "data\\raw\\511145.protein.links.v12.5.txt.gz",
+      "url": "https://stringdb-static.org/download/protein.links.v12.0/511145.protein.links.v12.0.txt.gz",
+      "path": "data\\raw\\511145.protein.links.v12.0.txt.gz",
       "bytes": 4589560,
       "sha256": "a9802df920772bea20347669c425e5ac830eb9e7c320dc773faab3994bcb84b2"
     },
@@ -61,7 +61,7 @@
     {
       "name": "vfdb",
       "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
       "path": "data\\raw\\VFDB_setA_pro.fas.gz",
       "bytes": 1307043,
       "sha256": "810eec30e5d5c3049e879f26ec4dbd0ea1b964b5e7409ebca086d513fe4aeb32"
@@ -69,7 +69,7 @@
     {
       "name": "vfdb_annotations",
       "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
       "path": "data\\raw\\VFs.xls.gz",
       "bytes": 251771,
       "sha256": "d8f3ffcbd5acb0e1b42bd9a965a139fc8103f278d0c27a9219e134e169cb1aab"
@@ -77,7 +77,7 @@
     {
       "name": "vfdb_setB_proteins",
       "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
       "path": "data\\raw\\VFDB_setB_pro.fas.gz",
       "bytes": 5644896,
       "sha256": "480ef7ac852f76f5bd9d88e8967b38a4ce1e50d905f6a3595beac1e3a2b6386e"
@@ -85,7 +85,7 @@
     {
       "name": "vfdb_setA_nucleotides",
       "status": "cached",
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
       "path": "data\\raw\\VFDB_setA_nt.fas.gz",
       "bytes": 2010277,
       "sha256": "27fece9c36735ca19c435051e431102be181533017da1aef6f7a37cfda9d24ae"

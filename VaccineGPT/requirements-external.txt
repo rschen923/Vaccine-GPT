@@ -12,3 +12,4 @@ rna-fm>=0.1.1
 # pip install evo2
 # Optional RNA-FM-compatible Hugging Face loader:
 # install the RNA-FM checkpoint's published package/model revision separately.
+torchdiffeq>=0.2.3

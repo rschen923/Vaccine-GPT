@@ -54,14 +54,16 @@
     },
     {
       "name": "string_links",
+      "release": "STRING 2023 (v12.0)",
       "kind": "http",
       "enabled": true,
-      "url": "https://stringdb-static.org/download/protein.links.v12.5/511145.protein.links.v12.5.txt.gz",
-      "output": "511145.protein.links.v12.5.txt.gz",
+      "url": "https://stringdb-static.org/download/protein.links.v12.0/511145.protein.links.v12.0.txt.gz",
+      "output": "511145.protein.links.v12.0.txt.gz",
       "min_bytes": 1000
     },
     {
       "name": "iedb_mhc_ii",
+      "release": "IEDB 2024 update",
       "kind": "paged_json",
       "enabled": true,
       "url": "https://query-api.iedb.org/epitope_search",
@@ -73,36 +75,40 @@
     },
     {
       "name": "vfdb",
+      "release": "VFDB 2025",
       "kind": "http",
       "enabled": true,
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
       "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz"],
       "output": "VFDB_setA_pro.fas.gz",
       "min_bytes": 1000
     },
     {
       "name": "vfdb_annotations",
+      "release": "VFDB 2025",
       "kind": "http",
       "enabled": true,
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
       "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFs.xls.gz"],
       "output": "VFs.xls.gz",
       "min_bytes": 1000
     },
     {
       "name": "vfdb_setB_proteins",
+      "release": "VFDB 2025",
       "kind": "http",
       "enabled": true,
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz",
       "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setB_pro.fas.gz"],
       "output": "VFDB_setB_pro.fas.gz",
       "min_bytes": 1000
     },
     {
       "name": "vfdb_setA_nucleotides",
+      "release": "VFDB 2025",
       "kind": "http",
       "enabled": true,
-      "url": "http://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz",
       "fallback_urls": ["https://www.mgc.ac.cn/VFs/Down/VFDB_setA_nt.fas.gz"],
       "output": "VFDB_setA_nt.fas.gz",
       "min_bytes": 1000
@@ -126,6 +132,7 @@
     },
     {
       "name": "ogee_or_deg",
+      "release": "OGEE v3 / DEG 15",
       "kind": "manual",
       "enabled": true,
       "url": "https://essentiality.org/",

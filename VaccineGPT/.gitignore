@@ -17,3 +17,7 @@ data_download/
 tools/datasets.exe
 tools/
 data/raw/*.partial
+data/processed/vfdb_pilot/
+literature-output/fulltext/
+literature-output/papers.jsonl
+literature-output/screening.jsonl

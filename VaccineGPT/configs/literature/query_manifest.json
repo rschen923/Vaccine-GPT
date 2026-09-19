@@ -1,0 +1,108 @@
+{
+  "schema_version": "literature-query-manifest/v1",
+  "date_window": {
+    "from": "2024-09-19",
+    "to": "2026-09-19"
+  },
+  "resumability": {
+    "completed_queries_file": "completed_queries.json",
+    "query_identity": "section.id:query.id",
+    "safe_to_rerun": true
+  },
+  "targets": {
+    "mathematical_model_audit": {"minimum_papers": 200, "minimum_per_section": 20, "minimum_review_fraction": 0.25, "minimum_research_fraction": 0.25},
+    "data_experiment_audit": {"minimum_papers": 100, "minimum_per_section": 20, "minimum_review_fraction": 0.25, "minimum_research_fraction": 0.25}
+  },
+  "sections": [
+    {
+      "id": "mechanistic_ode_dynamics",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "biological-odes", "q": "biological mechanistic ordinary differential equation model host pathogen", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "immune-dynamics", "q": "immune response dynamical systems differential equation model", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "stochastic_and_population_models",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "sir-models", "q": "SIR epidemiological model vaccine waning immunity", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "stochastic-biology", "q": "stochastic biological systems model uncertainty", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "representation_learning_and_foundation_models",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "protein-foundation", "q": "protein language model foundation model biological representation learning", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "multimodal-biology", "q": "multimodal representation learning biological data review", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "graph_learning_and_ppi",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "ppi-graph", "q": "protein protein interaction graph neural network prediction", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "biological-graphs", "q": "graph neural network systems biology review", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "multi_task_uncertainty_and_calibration",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "multitask", "q": "multi task learning biological prediction uncertainty calibration", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "calibration", "q": "neural network calibration uncertainty biomedical prediction", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "pu_learning_and_ranking",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "positive-unlabeled", "q": "positive unlabeled learning biological data", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "learning-to-rank", "q": "learning to rank drug vaccine epitope prediction", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "vaccine_immunology_and_antigen_design",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "antigen-design", "q": "computational vaccine antigen design immunogenicity", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "epitope-prediction", "q": "epitope prediction MHC peptide binding vaccine", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "host_pathogen_and_virulence",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "host-pathogen", "q": "host pathogen interaction systems biology review", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "virulence", "q": "virulence factor prediction machine learning pathogen", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "omics_and_public_data_resources",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "single-cell-omics", "q": "single cell omics vaccine immune response public dataset", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "microbiome", "q": "microbiome vaccine response public data review", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    },
+    {
+      "id": "experimental_validation_and_reproducibility",
+      "minimum": 20,
+      "composition": {"minimum_reviews": 5, "minimum_research": 5},
+      "queries": [
+        {"id": "vaccine-experiments", "q": "vaccine experimental validation animal cell culture immunogenicity", "providers": ["openalex", "pubmed", "europepmc", "crossref"]},
+        {"id": "reproducible-ml", "q": "reproducibility biomedical machine learning external validation", "providers": ["openalex", "pubmed", "europepmc", "crossref"]}
+      ]
+    }
+  ]
+}

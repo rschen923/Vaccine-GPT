@@ -1,0 +1,2 @@
+"""Fast architecture verification commands."""
+
