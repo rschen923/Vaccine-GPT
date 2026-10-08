@@ -1,44 +1,66 @@
 {
+  "schema_version": "vaccinegpt-model-provenance-1.0",
   "policy": {
     "pretrained_weights_are_initialization": true,
     "default_freeze": true,
-    "fine_tune_only_after_downstream_split": true
+    "fine_tune_only_after_grouped_downstream_split": true,
+    "record_checkpoint_revision_and_sha256": true,
+    "model_predictions_are_not_experimental_evidence": true
   },
-  "models": {
-    "clef": {
-      "source": "PengYueECUST1997/CLEF",
-      "checkpoint": "weights/clef/checkpoint.pt",
-      "role": "protein_alignment_anchor",
-      "trainable_by_default": false
+  "v1_protein_track": {
+    "primary": {
+      "name": "ESM-3 open small",
+      "source": "https://github.com/Biohub/esm",
+      "checkpoint": "esm3-sm-open-v1",
+      "loader": "esm.models.esm3.ESM3.from_pretrained",
+      "role": "primary frozen protein sequence residue representation",
+      "expected_dimension": 1536,
+      "trainable_by_default": false,
+      "local_weights_present": false,
+      "runtime": "separate Biohub esm environment; see requirements-esm3.txt"
     },
-    "esm2": {
-      "source": "facebookresearch/esm",
-      "loader": "esm.pretrained.esm2_t33_650M_UR50D",
-      "role": "protein_token_embedding",
-      "trainable_by_default": false
-    },
+    "clef_compatibility_reference": {
+      "name": "CLEF",
+      "source": "https://github.com/PengYueECUST1997/CLEF",
+      "source_revision": "6ad84260db7a7ecdf491b08e54a89b8428bac52d",
+      "license": "MIT repository code; verify checkpoint and dataset terms separately",
+      "role": "upstream-compatible sequence-only H3 T3SS/T4SS/T6SS effector inference, kept on required ESM-2 650M inputs",
+      "encoder_checkpoints": [
+        "CLEF-DP+AT.pt",
+        "CLEF-DP+MSA+3Di+AT.pt"
+      ],
+      "classifier_checkpoints": [
+        "T3classifier-CLEF-DP+AT-0.5cutoff.pt",
+        "T4classifier-CLEF-DP+MSA+3Di+AT-0.83cutoff.pt",
+        "T6classifier-CLEF-DP+MSA+3Di+AT-0.7cutoff.pt"
+      ],
+      "checkpoint_download_directory": "external user-managed data directory; not tracked",
+      "local_weights_present": true,
+      "local_weights_location": "../data/weights/clef/",
+      "local_weights_tracked": false,
+      "task_transfer_limit": "CLEF's published classifiers require their ESM-2-compatible input; do not substitute ESM-3 embeddings. CLEF supports T3SS/T4SS/T6SS effector prediction only, not OMV or protective-antigen prediction."
+    }
+  },
+  "v2_dna_track": {
+    "primary": {
+      "name": "Evo 2",
+      "source": "https://github.com/ArcInstitute/evo2",
+      "checkpoint": "evo2_7b",
+      "role": "frozen DNA-window representation",
+      "trainable_by_default": false,
+      "runtime": "Linux/WSL2 CUDA stack; not available in the current CPU-only PyTorch environment",
+      "local_weights_present": false
+    }
+  },
+  "other_models": {
     "dnabert2": {
-      "source": "zhihan1996/DNABERT-2-117M",
-      "loader": "transformers.AutoModel.from_pretrained",
-      "role": "DNA_embedding",
-      "trainable_by_default": false
-    },
-    "proteomelm": {
-      "source": "Bitbol-Lab/ProteomeLM-M",
-      "loader": "transformers.AutoModel.from_pretrained",
-      "role": "proteome_context_embedding",
-      "trainable_by_default": false
-    },
-    "evo2": {
-      "source": "arcinstitute/evo2",
-      "loader": "evo2.Evo2",
-      "role": "alternative_DNA_embedding",
+      "source": "https://github.com/MAGICS-LAB/DNABERT_2",
+      "role": "optional v2 DNA baseline",
       "trainable_by_default": false
     },
     "rna_fm": {
-      "source": "ml4bio/RNA-FM",
-      "loader": "fm.pretrained.rna_fm_t12",
-      "role": "ncRNA_embedding",
+      "source": "https://github.com/ml4bio/RNA-FM",
+      "role": "optional ncRNA feature source; outside the v1 primary input contract",
       "trainable_by_default": false
     }
   }

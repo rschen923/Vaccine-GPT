@@ -1,63 +1,38 @@
 {
-  "weights_policy": {
-    "preserve_original": true,
-    "freeze_upstream_by_default": true,
-    "fine_tune_requires_explicit_override": true,
-    "local_cache_root": "model_cache"
-  },
-  "adapters": {
-    "protein_esm2": {
-      "family": "esm2",
-      "model_id": "esm2_t33_650M_UR50D",
-      "source": "facebookresearch/esm",
-      "layer": 33,
-      "frozen": true
-    },
-    "protein_proteomelm": {
-      "family": "proteomelm",
-      "model_id": "Bitbol-Lab/ProteomeLM-M",
-      "source": "Bitbol-Lab/ProteomeLM",
-      "frozen": true
-    },
-    "protein_esm2_proteomelm": {
-      "family": "protein_dual",
-      "source": "facebookresearch/esm + Bitbol-Lab/ProteomeLM",
-      "frozen": true,
-      "esm2": {
-        "model_id": "esm2_t33_650M_UR50D",
-        "layer": 33
-      },
-      "proteomelm": {
-        "model_id": "Bitbol-Lab/ProteomeLM-M"
+  "schema_version": "vaccinegpt-pretrained-models-1.0",
+  "v1": {
+    "primary_protein_adapter": "protein_esm3",
+    "adapters": {
+      "protein_esm3": {
+        "backend": "esm3",
+        "model_id": "esm3-sm-open-v1",
+        "source": "https://github.com/Biohub/esm",
+        "frozen": true,
+        "max_length": 256,
+        "output_dimension": 1536,
+        "role": "primary_protein_representation",
+        "runtime_status": "separate_optional_environment"
       }
-    },
-    "dna_dnabert2": {
-      "family": "dnabert2",
-      "model_id": "zhihan1996/DNABERT-2-117M",
-      "source": "Zjunlp/DNABERT_2",
-      "frozen": true,
-      "max_length": 1024
-    },
-    "dna_evo2": {
-      "family": "evo2",
-      "model_id": "evo2_7b_base",
-      "source": "arcinstitute/evo2",
-      "layer_name": "blocks.28.mlp.l3",
-      "frozen": true
-    },
-    "rna_evo2": {
-      "family": "evo2",
-      "model_id": "evo2_7b_base",
-      "source": "arcinstitute/evo2",
-      "layer_name": "blocks.28.mlp.l3",
-      "frozen": true,
-      "input_alphabet": "ACGT"
-    },
-    "rna_rnafm_reference": {
-      "family": "transformers",
-      "model_id": "rna-fm",
-      "source": "AnacletoLAB/miRInter-Trans",
-      "status": "reference_only_not_loaded"
     }
+  },
+  "v2": {
+    "adapters": {
+      "dna_evo2": {
+        "backend": "evo2",
+        "model_id": "evo2_7b",
+        "source": "https://github.com/ArcInstitute/evo2",
+        "layer_name": "blocks.28.mlp.l3",
+        "frozen": true,
+        "role": "optional DNA-window encoder",
+        "runtime_status": "Linux_or_WSL2_CUDA_only_not_installed"
+      }
+    }
+  },
+  "policy": {
+    "v1_rejects_dna_as_primary_input": true,
+    "esm3_is_primary_v1_protein_backbone": true,
+    "esm2_is_retained_only_for_upstream_clef_checkpoint_compatibility": true,
+    "checkpoint_revision_and_sha256_required_before_claimed_inference": true,
+    "missing_model_weights_must_raise_not_return_random_biological_scores": true
   }
 }

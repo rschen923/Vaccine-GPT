@@ -2,92 +2,133 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
+import sys
 from pathlib import Path
+from typing import Any
 
 import torch
 
-from shared.lineage import lineage_tag
-from shared.splits import assert_disjoint, grouped_split
-from src_m1.models import M1Encoder
-from src_m1.real_data import load_feature_views
-from src_m2.metrics import pairwise_ranking_loss
-from src_m2.models import M2Predictor
-from src_m2.real_data import load_gene_groups, load_label_tiers, load_task_labels
-from shared.dataset import balanced_sample_weights
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from src_m2.training import fit_supervised_heads
 
 
-def main() -> dict:
-    parser = argparse.ArgumentParser(description="Train M1/M2 from UDC-02 and UDC-03 JSONL artifacts")
-    parser.add_argument("--features-jsonl", required=True)
-    parser.add_argument("--labels-jsonl", required=True)
-    parser.add_argument("--groups-jsonl", required=True)
-    parser.add_argument("--track", choices=("SOM", "INT"), default="SOM")
-    parser.add_argument("--epochs", type=int, default=40)
-    parser.add_argument("--learning-rate", type=float, default=1e-3)
-    parser.add_argument("--output-dir", default="artifacts/real_run")
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    records = []
+    with path.open("r", encoding="utf-8") as stream:
+        for line_number, line in enumerate(stream, 1):
+            if line.strip():
+                try:
+                    records.append(json.loads(line))
+                except json.JSONDecodeError as error:
+                    raise ValueError(f"{path}:{line_number}: invalid JSON: {error}") from error
+    return records
+
+
+def train(
+    features_path: Path,
+    labels_path: Path,
+    groups_path: Path,
+    output_dir: Path,
+    epochs: int = 20,
+    batch_id: str = "UNSPECIFIED",
+) -> dict[str, object]:
+    feature_records = read_jsonl(features_path)
+    label_records = read_jsonl(labels_path)
+    group_records = read_jsonl(groups_path)
+    feature_map = {}
+    for record in feature_records:
+        gene_id = str(record.get("gene_id") or "")
+        if not gene_id or gene_id in feature_map:
+            raise ValueError(f"missing or duplicate feature gene_id: {gene_id!r}")
+        vector = record.get("z_gctx")
+        if not isinstance(vector, list) or len(vector) != 128:
+            raise ValueError(f"{gene_id}: z_gctx must contain 128 values")
+        if not all(math.isfinite(float(value)) for value in vector):
+            raise ValueError(f"{gene_id}: z_gctx contains non-finite values")
+        feature_map[gene_id] = [float(value) for value in vector]
+    gene_ids = sorted(feature_map)
+    if not gene_ids:
+        raise ValueError("feature file contains no genes")
+    group_map = {
+        str(row.get("gene_id") or ""): str(row.get("group_id") or "")
+        for row in group_records
+    }
+    split_methods = {str(row.get("split_group_method") or "") for row in group_records}
+    if split_methods != {"mmseqs2_90"}:
+        raise ValueError("M2 training requires explicit MMseqs2 90%-identity split groups")
+    missing_groups = [gene_id for gene_id in gene_ids if not group_map.get(gene_id) or group_map[gene_id] == "unknown"]
+    if missing_groups:
+        raise ValueError(
+            f"{len(missing_groups)} genes lack trustworthy group_id values; "
+            "leakage-safe training is blocked"
+        )
+    index = {gene_id: i for i, gene_id in enumerate(gene_ids)}
+    heads = ("H1", "H2", "H3", "H4")
+    labels = {
+        head: torch.full((len(gene_ids),), float("nan"), dtype=torch.float32)
+        for head in heads
+    }
+    levels = {head: ["L4"] * len(gene_ids) for head in heads}
+    evidence_by_gene_task: dict[tuple[str, str], list[tuple[float, str]]] = {}
+    for record in label_records:
+        gene_id = str(record.get("gene_id") or "")
+        task = str(record.get("task") or "")
+        if gene_id not in index or task not in heads:
+            continue
+        level = str(record.get("evidence_level") or "")
+        value = float(record["label"])
+        if not math.isfinite(value) or value not in {0.0, 1.0}:
+            raise ValueError(f"{gene_id}/{task}: binary target must be 0 or 1")
+        key = (gene_id, task)
+        evidence_by_gene_task.setdefault(key, []).append((value, level))
+    for (gene_id, task), evidence in evidence_by_gene_task.items():
+        values = {value for value, _ in evidence}
+        if len(values) > 1:
+            raise ValueError(f"conflicting labels require quarantine: {gene_id}/{task}")
+        labels[task][index[gene_id]] = next(iter(values))
+        evidence_levels = {level for _, level in evidence}
+        levels[task][index[gene_id]] = (
+            "E1" if "E1" in evidence_levels else "E2" if "E2" in evidence_levels else (
+                "E3" if "E3" in evidence_levels else "E4"
+            )
+        )
+    return fit_supervised_heads(
+        torch.tensor([feature_map[gene_id] for gene_id in gene_ids], dtype=torch.float32),
+        labels,
+        levels,
+        [group_map[gene_id] for gene_id in gene_ids],
+        output_dir,
+        epochs=epochs,
+        batch_id=batch_id,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Fit M2 heads only from leakage-grouped, row-provenanced E1/E2 labels."
+    )
+    parser.add_argument("--features-jsonl", type=Path, required=True)
+    parser.add_argument("--labels-jsonl", type=Path, required=True)
+    parser.add_argument("--groups-jsonl", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-id", required=True)
     args = parser.parse_args()
-
-    label_records = [
-        json.loads(line) for line in Path(args.labels_jsonl).read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
-    gene_ids = sorted({record["gene_id"] for record in label_records})
-    groups = load_gene_groups(args.groups_jsonl, gene_ids)
-    train_idx, valid_idx, test_idx = grouped_split(groups, seed=42)
-    assert_disjoint(train_idx, valid_idx, test_idx)
-    features = load_feature_views(args.features_jsonl, gene_ids, args.track)
-    labels = {
-        "T1": load_task_labels(args.labels_jsonl, gene_ids, "T1"),
-        "T2": load_task_labels(args.labels_jsonl, gene_ids, "T2"),
-        "T3": load_task_labels(args.labels_jsonl, gene_ids, "T3b"),
-        "T4": load_task_labels(args.labels_jsonl, gene_ids, "T4"),
-    }
-    sample_weights = torch.tensor(
-        balanced_sample_weights(
-            labels["T1"].tolist(),
-            load_label_tiers(args.labels_jsonl, gene_ids, "T1"),
-        ),
-        dtype=torch.float32,
-    )
-    model = M1Encoder({view: tensor.shape[1] for view, tensor in features.items()}, track=args.track)
-    predictor = M2Predictor()
-    optimizer = torch.optim.AdamW(
-        list(model.parameters()) + list(predictor.parameters()), lr=args.learning_rate,
-    )
-    history = []
-    for _ in range(args.epochs):
-        model.train(); predictor.train(); optimizer.zero_grad()
-        outputs = predictor(model(features))
-        loss = (
-            torch.nn.functional.cross_entropy(
-                outputs["T1"][train_idx], labels["T1"][train_idx],
-                reduction="none",
-            ).mul(sample_weights[train_idx]).mean()
-            + torch.nn.functional.binary_cross_entropy_with_logits(outputs["T2"][train_idx], labels["T2"][train_idx])
-            + torch.nn.functional.mse_loss(torch.sigmoid(outputs["T3"][train_idx]), labels["T3"][train_idx])
-            + pairwise_ranking_loss(outputs["T4"][train_idx], labels["T4"][train_idx])
+    print(
+        json.dumps(
+            train(
+                args.features_jsonl,
+                args.labels_jsonl,
+                args.groups_jsonl,
+                args.output_dir,
+                args.epochs,
+                args.batch_id,
+            ),
+            indent=2,
         )
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(list(model.parameters()) + list(predictor.parameters()), 1.0)
-        optimizer.step()
-        history.append(float(loss.detach()))
-
-    output = Path(args.output_dir)
-    output.mkdir(parents=True, exist_ok=True)
-    lineage = lineage_tag("M1M2-GIC-SDE-0.2.0", "FEAT-EXT-0.1.0", "LABEL-REAL-0.1.0", args.batch_id)
-    torch.save({"m1": model.state_dict(), "m2": predictor.state_dict(), "lineage": lineage}, output / "checkpoint.pt")
-    report = {
-        "lineage": lineage,
-        "track": args.track,
-        "genes": len(gene_ids),
-        "split_sizes": [len(train_idx), len(valid_idx), len(test_idx)],
-        "history": history,
-        "note": "Run on supplied UDC records; this report is not generated from synthetic data.",
-    }
-    (output / "report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-    print(json.dumps(report, indent=2))
-    return report
+    )
 
 
 if __name__ == "__main__":

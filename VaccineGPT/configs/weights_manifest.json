@@ -1,57 +1,80 @@
 {
+  "schema_version": "vaccinegpt-weights-manifest-1.0",
   "policy": {
-    "original_weights_are_inputs_not_repository_artifacts": true,
+    "upstream_weights_are_not_repository_artifacts": true,
     "never_overwrite_upstream_checkpoints": true,
-    "record_sha256_and_source_revision": true,
-    "default_upstream_requires_grad": false
+    "record_source_commit_and_sha256_before_run": true,
+    "freeze_upstream_models_by_default": true,
+    "model_predictions_are_not_experimental_evidence": true
   },
-  "upstream_weights": [
-    {
-      "name": "CLEF",
-      "source": "https://github.com/PengYueECUST1997/CLEF",
-      "local_path": "external/CLEF",
-      "role": "protein_encoder_alignment_anchor",
-      "status": "path_required",
-      "trainable": false
-    },
+  "models": [
     {
       "name": "ESM-2",
       "source": "https://github.com/facebookresearch/esm",
       "checkpoint": "esm2_t33_650M_UR50D",
-      "role": "protein_residue_embedding",
-      "status": "loaded_by_fair_es m",
-      "trainable": false
+      "role": "CLEF checkpoint-compatible H3 inference input only; not VaccineGPT M1 primary",
+      "status": "downloaded_external_data_dir_not_tracked",
+      "local_path": "../data/weights/esm2_t33_650M_UR50D.pt",
+      "sha256": "ea9d0522b335a8778dea6535a65301f10208dece28cd5865482b0b1fc446168c",
+      "companion_checkpoint": {
+        "file": "esm2_t33_650M_UR50D-contact-regression.pt",
+        "sha256": "8ffe6edbd4173dc8d45c2cd5cb27d43aad77ec26b4c768200c58ae1f96693575",
+        "source": "https://dl.fbaipublicfiles.com/fair-esm/regression/"
+      }
     },
     {
-      "name": "DNABERT-2",
-      "source": "https://github.com/Zjunlp/DNABERT_2",
-      "checkpoint": "zhihan1996/DNABERT-2-117M",
-      "role": "DNA_embedding",
-      "status": "loaded_by_transformers",
-      "trainable": false
+      "name": "CLEF",
+      "source": "https://github.com/PengYueECUST1997/CLEF",
+      "source_revision": "6ad84260db7a7ecdf491b08e54a89b8428bac52d",
+      "code_license": "MIT",
+      "role": "sequence-only T3SS/T4SS/T6SS effector encoder and task-specific classifiers",
+      "encoder_checkpoints": [
+        {
+          "file": "CLEF-DP+AT.pt",
+          "sha256": "f580e2bc8bd40ff3b170fe0b007bdff3e039aed50531ca3c0a8ef5f0859d8bfa",
+          "approximate_size": "124.7 MB",
+          "checkpoint_terms": "not independently verified"
+        },
+        {
+          "file": "CLEF-DP+MSA+3Di+AT.pt",
+          "sha256": "dd96250140ebc35e133ad5fceadd65eed28dc2d509d6cfea0fbfa46c8f5dc8a2",
+          "approximate_size": "119.4 MB",
+          "checkpoint_terms": "not independently verified"
+        }
+      ],
+      "classifier_checkpoints": [
+        {
+          "file": "T3classifier-CLEF-DP+AT-0.5cutoff.pt",
+          "sha256": "2926ada2bfe9a82eb1ba40fecd5e4cf3d8d1aa75db8721e18bee41daaf29c43a"
+        },
+        {
+          "file": "T4classifier-CLEF-DP+MSA+3Di+AT-0.83cutoff.pt",
+          "sha256": "944d47e3ba3edd4d7a76ce4f9ff4f1c1736600c72d95580330b5d2b1ab3b1b0c"
+        },
+        {
+          "file": "T6classifier-CLEF-DP+MSA+3Di+AT-0.7cutoff.pt",
+          "sha256": "d27f103fbcd605d1e678604ca1069bb18188d2148be8798cd79b62699237223b"
+        }
+      ],
+      "status": "downloaded_external_data_dir_not_tracked",
+      "local_path": "../data/weights/clef/"
     },
     {
-      "name": "ProteomeLM",
-      "source": "https://github.com/Bitbol-Lab/ProteomeLM",
-      "checkpoint": "Bitbol-Lab/ProteomeLM-M",
-      "role": "proteome_context_embedding",
-      "status": "loaded_by_transformers",
-      "trainable": false
+      "name": "ESM-3",
+      "source": "https://github.com/Biohub/esm",
+      "checkpoint": "esm3-sm-open-v1",
+      "role": "VaccineGPT M1 primary frozen residue representation (1536 dimensions)",
+      "status": "separate_runtime_available_via_requirements-esm3_not_installed_in_fair-esm_environment",
+      "runtime": "Biohub esm package in a separate environment",
+      "sha256": null
     },
     {
-      "name": "Evo2",
-      "source": "https://github.com/arcinstitute/evo2",
-      "checkpoint": "evo2_7b_base",
-      "role": "DNA_or_RNA_fallback_embedding",
-      "status": "loaded_by_evo2_in_linux_or_wsl2",
-      "trainable": false
-    },
-    {
-      "name": "RNA-FM",
-      "source": "https://github.com/AnacletoLAB/miRInter-Trans",
-      "role": "RNA_embedding_reference",
-      "status": "reference_only_until_a_verified_checkpoint_and_loader_are_selected",
-      "trainable": false
+      "name": "Evo 2",
+      "source": "https://github.com/ArcInstitute/evo2",
+      "checkpoint": "evo2_7b",
+      "role": "v2 DNA-window representation",
+      "status": "Linux_WSL2_CUDA_runtime_required_not_installed",
+      "sha256": null
     }
   ]
 }

@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from shared.contracts import validate_label
+from shared.data_quality import classify_label_evidence, normalize_protein
 from shared.dataset import merge_annotations, sequence_key, write_jsonl
 from shared.split_manifest import write_split_manifest
 
@@ -60,30 +61,37 @@ def value(row: dict, *names: str, required: bool = True) -> str | None:
 
 
 def normalize_sequences(input_path: str, output_path: str) -> list[dict]:
-    records, seen = [], set()
+    records = []
     for row in read_table(input_path):
         protein = value(row, "protein_sequence", "protein", "aa_sequence", required=False)
         dna = value(row, "dna_sequence", "cds", "sequence", required=False)
         if not protein and not dna:
             continue
-        sequence = protein or dna
+        sequence_role = "protein" if protein else "dna"
         if protein:
-            alphabet = "ACDEFGHIKLMNPQRSTVWY"
+            normalized = normalize_protein(protein, "protein")
+            sequence = normalized["sequence"]
+            key = normalized["sequence_sha256"]
+            quality_status = normalized["quality_status"]
+            quality_reasons = normalized["quality_reasons"]
         else:
-            raw = str(dna).upper()
-            alphabet = "ACGTN" if set(raw.replace("-", "").replace(" ", "")) <= set("ACGTN") else "ACDEFGHIKLMNPQRSTVWY"
-        key = sequence_key(sequence, alphabet)
-        if key in seen:
-            continue
-        seen.add(key)
+            raw = "".join(str(dna).upper().split()).replace("-", "")
+            invalid = sorted(set(raw) - set("ACGTN"))
+            sequence = raw
+            key = sequence_key(raw, alphabet="ACGTN") if raw and not invalid else None
+            quality_reasons = ["invalid_dna_characters"] if invalid else []
+            quality_status = "invalid" if invalid or not raw else "pass"
         records.append({
             "gene_id": value(row, "gene_id", "locus_tag", "protein_id", "accession"),
             "genome_id": value(row, "genome_id", "assembly", "organism", required=False) or "unknown",
             "operon_id": value(row, "operon_id", "operon", required=False),
             "contig_id": value(row, "contig_id", "contig", required=False),
-            "protein_sequence": protein,
-            "dna_sequence": dna,
+            "protein_sequence": sequence if sequence_role == "protein" else None,
+            "dna_sequence": sequence if sequence_role == "dna" else None,
+            "sequence_role": sequence_role,
             "sequence_hash": key,
+            "sequence_quality_status": quality_status,
+            "sequence_quality_reasons": quality_reasons,
             "source": value(row, "source", "database", required=False) or "unknown",
         })
     write_jsonl(records, output_path)
@@ -91,25 +99,34 @@ def normalize_sequences(input_path: str, output_path: str) -> list[dict]:
 
 
 def normalize_labels(
-    input_paths: list[str], output_path: str, lineage_path: str
+    input_paths: list[str], output_path: str, lineage: dict
 ) -> list[dict]:
-    lineage = json.loads(Path(lineage_path).read_text(encoding="utf-8"))
     all_records = []
     for path in input_paths:
         for row in read_table(path):
             task = value(row, "task")
             if task == "T3":
                 task = "T3b"
-            level = value(row, "level", required=False) or "L2"
+            source = value(row, "source", "database", required=False) or Path(path).stem
             record = {
                 "gene_id": value(row, "gene_id", "locus_tag", "protein_id", "accession"),
                 "task": task,
-                "level": level,
                 "label": float(value(row, "label", "value", "score")),
-                "weight": {"L1": 1.0, "L2": 0.7, "L3": 0.5, "L4": 0.3}.get(level, 0.3),
-                "source": value(row, "source", "database", required=False) or Path(path).stem,
+                "source": source,
+                "assay": row.get("assay") or row.get("assay_type") or row.get("assay_names"),
+                "method": row.get("method") or row.get("evidence_type"),
+                "primary_reference": (
+                    row.get("primary_reference") or row.get("doi") or row.get("pmid")
+                    or row.get("pmc") or row.get("publication")
+                ),
+                "organism": row.get("organism") or row.get("taxon") or row.get("target_organism"),
+                "is_private": bool(row.get("is_private") or row.get("private_dataset")),
+                "legacy_level": value(row, "level", required=False),
                 "lineage": lineage,
             }
+            evidence = classify_label_evidence(record)
+            record.update(evidence)
+            record["weight"] = evidence["evidence_weight"]
             validate_label(record)
             all_records.append(record)
     merged = []
@@ -126,11 +143,14 @@ def main() -> None:
     parser.add_argument("--sequences", required=True)
     parser.add_argument("--labels", nargs="+", required=True)
     parser.add_argument("--lineage", required=True)
+    parser.add_argument("--batch-id", required=True)
     parser.add_argument("--output-dir", default="data/processed")
     args = parser.parse_args()
+    lineage = json.loads(Path(args.lineage).read_text(encoding="utf-8"))
+    lineage["batch_id"] = args.batch_id
     output = Path(args.output_dir)
     sequence_records = normalize_sequences(args.sequences, output / "sequences.jsonl")
-    label_records = normalize_labels(args.labels, output / "labels.jsonl", args.lineage)
+    label_records = normalize_labels(args.labels, output / "labels.jsonl", lineage)
     label_levels = {}
     for label in label_records:
         label_levels.setdefault(label["gene_id"], label.get("level", "unknown"))

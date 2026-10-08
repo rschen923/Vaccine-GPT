@@ -4,8 +4,8 @@ from typing import Mapping
 
 from .foundation import (
     CLEFCheckpointAdapter,
-    CompositeProteinAdapter,
     ESM2Adapter,
+    ESM3Adapter,
     Evo2Adapter,
     FoundationFeatureStore,
     FoundationModelConfig,
@@ -17,13 +17,13 @@ from .foundation import (
 def build_feature_store(config: Mapping[str, Mapping[str, object]]) -> FoundationFeatureStore:
     adapters = {}
     for view, raw in config.items():
-        if view in ("clef", "proteome"):
-            continue
         item = dict(raw)
         model_config = FoundationModelConfig(**item.pop("config"))
         backend = item.pop("backend")
         if backend == "esm2":
             adapter = ESM2Adapter(model_config)
+        elif backend == "esm3":
+            adapter = ESM3Adapter(model_config)
         elif backend in ("dnabert2", "proteomelm"):
             adapter = TransformersSequenceAdapter(model_config)
         elif backend == "evo2":
@@ -37,22 +37,4 @@ def build_feature_store(config: Mapping[str, Mapping[str, object]]) -> Foundatio
         else:
             raise ValueError(f"unsupported foundation backend: {backend}")
         adapters[view] = adapter
-    if "protein" in config and config["protein"]["backend"] == "esm2":
-        protein = config["protein"]
-        esm = adapters["protein"]
-        clef = None
-        proteome = None
-        if "clef" in config:
-            raw = dict(config["clef"])
-            clef_cfg = FoundationModelConfig(**raw.pop("config"))
-            clef = CLEFCheckpointAdapter(clef_cfg, raw["module_name"], raw["class_name"])
-        if "proteome" in config:
-            proteome_cfg = FoundationModelConfig(**dict(config["proteome"])["config"])
-            proteome = TransformersSequenceAdapter(proteome_cfg)
-        adapters["protein"] = CompositeProteinAdapter(
-            FoundationModelConfig(**dict(protein["config"])),
-            esm,
-            clef=clef,
-            proteome=proteome,
-        )
     return FoundationFeatureStore(adapters)

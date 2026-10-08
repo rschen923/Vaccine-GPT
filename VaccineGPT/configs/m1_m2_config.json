@@ -1,33 +1,95 @@
 {
+  "schema_version": "vaccinegpt-v1-v2-1.0",
   "lineage": {
-    "model_version": "M1M2-GIC-SDE-0.1.0",
-    "feature_version": "FEAT-0.1.0",
-    "label_version": "LABEL-0.1.0",
-    "batch_id": "B2026-09"
+    "model_version": "VaccineGPT-v1-dev",
+    "feature_version": "FEAT-v1-1.0",
+    "label_version": "LABEL-evidence-1.0",
+    "batch_id": "REPLACE_WITH_BATCH_ID"
   },
-  "m1": {
-    "view_dims": {
-      "protein": 256,
-      "dna": 192,
-      "rna": 160,
-      "omics": 128
+  "v1": {
+    "input_contract": "annotated protein sequences only; DNA is not a v1 model input",
+    "protein_backbone": {
+      "backend": "biohub-esm",
+      "model_id": "esm3-sm-open-v1",
+      "residue_dimension": 1536,
+      "max_length": 256,
+      "freeze": true,
+      "batch_size": 1
     },
-    "latent_dim": 128,
-    "num_relations": 7,
-    "epochs": 12,
-    "batch_size": 64,
-    "learning_rate": 1e-3
+    "clef_encoder_a": {
+      "latent_dimension": 128,
+      "transformer_layers": 2,
+      "attention_heads": 8,
+      "feedforward_dimension": 128,
+      "dropout": 0.1,
+      "pooling": "valid-residue mean",
+      "input_embeddings": "ESM-3 sequence-track residue embeddings"
+    },
+    "contrastive_learning": {
+      "temperature": 0.1,
+      "private_loss_weight": 1.0,
+      "private_negative_sampling": "same-genome only"
+    },
+    "private_features": {
+      "dimension": 14,
+      "components": {
+        "pace_quadratic": 3,
+        "rnaseq_four_comparisons_log2fc_and_neg_log10p": 8,
+        "optional_ecp": 3
+      },
+      "missingness_must_be_masked": true
+    },
+    "gce": {
+      "layers": 2,
+      "dimension": 128,
+      "heads": 4,
+      "dropout": 0.1,
+      "edge_types": [
+        "operon",
+        "coexpression",
+        "coadaptation",
+        "interaction"
+      ],
+      "reserved_v2_edge_types": ["dna_regulation", "dna_element_proximity"]
+    },
+    "m2": {
+      "heads": ["H1", "H2", "H3", "H4"],
+      "h4_hard_veto_probability": 0.5,
+      "pareto_thresholds": {"attenuation": 0.6, "retention": 0.6},
+      "three_reader_top_k": 50,
+      "implementation_path": "always empty in v1"
+    }
   },
-  "m2": {
-    "input_dim": 128,
-    "hidden_dim": 64,
-    "epochs": 12,
-    "batch_size": 64,
-    "learning_rate": 1e-3
+  "v2": {
+    "status": "implementation scaffold; not hardware-validated",
+    "input_contract": "whole bacterial genome DNA; gene and annotated genomic-element windows",
+    "backbone": "ArcInstitute/evo2",
+    "default_checkpoint": "evo2_7b",
+    "window_size_bp": 4096,
+    "overlap_bp": 512,
+    "gce_reserved_nodes": [
+      "gene",
+      "intergenic",
+      "unclassified_window",
+      "promoter",
+      "attenuator",
+      "origin",
+      "insertion_sequence",
+      "prophage_boundary"
+    ],
+    "new_head": "H5",
+    "evidence_required_for_implementation_route": [
+      "construction history",
+      "verified deletion boundaries",
+      "passage or reversion outcomes"
+    ]
   },
-  "fallback": {
-    "cache_feature_mode": true,
-    "use_external_models": false,
-    "external_model_note": "If ESM-2 / DNABERT-2 / RNA-FM / ProteomeLM are unavailable, switch to cached feature mode and keep the same schema for downstream training."
+  "runtime_policy": {
+    "esm3": "primary frozen protein sequence representation; separate optional runtime",
+    "esm2": "retained only for official CLEF checkpoint-compatible H3 effector inference",
+    "untrained_heads_must_not_emit_biological_recommendations": true,
+    "unknown_evidence_must_remain_unknown": true,
+    "weak_public_labels_must_not_be_promoted_to_E1_or_E2": true,
+    "raw_data_is_read_only": true
   }
 }

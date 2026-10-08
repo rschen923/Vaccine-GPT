@@ -13,6 +13,7 @@ artifacts/
 data/raw/
 data/processed/public/
 data/processed/public_final/
+data/
 data_download/
 tools/datasets.exe
 tools/
