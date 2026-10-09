@@ -56,7 +56,10 @@ from src_m2.h5 import implementation_route
 from src_m2.models import M2Predictor, SpeciesAdapter, freeze_for_species_adaptation
 from src_m2.pipeline import decide_genome
 from src_m2.training import fit_supervised_heads
-from scripts.train_real_sample_self_supervised import train as train_real_selfsup
+from scripts.train_real_sample_self_supervised import (
+    split_by_group,
+    train as train_real_selfsup,
+)
 from scripts.extract_target_proteome import extract_proteome
 from scripts.train_h3_public_ranker import _has_explicit_non_t3ss_pathway
 from scripts import predict_clef_effectors
@@ -686,6 +689,31 @@ class ArchitectureTests(unittest.TestCase):
             self.assertFalse(report["pretrained_weights_used"])
             self.assertIn("no E1/E2 gold labels", report["supervised_m2_training"])
             self.assertTrue((root / "training" / "m1_real_sample_self_supervised.pt").is_file())
+            split_manifest = json.loads(
+                (root / "training" / "split_manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(split_manifest["leakage_check"], "passed")
+
+    def test_self_supervised_split_keeps_genome_groups_together(self):
+        records = [
+            {
+                "gene_id": f"{genome}-{index}",
+                "genome_id": genome,
+                "protein_sequence": "ACDEFGHIKLMNPQRSTVWY" + genome + str(index),
+            }
+            for genome in ("g1", "g2", "g3", "g4", "g5", "g6")
+            for index in range(5)
+        ]
+        splits, method = split_by_group(records, seed=11)
+        self.assertIn("genome_id", method)
+        assignments = {}
+        for split, rows in splits.items():
+            for row in rows:
+                genome = row["genome_id"]
+                if genome in assignments:
+                    self.assertEqual(assignments[genome], split)
+                assignments[genome] = split
+        self.assertEqual(set(assignments), {"g1", "g2", "g3", "g4", "g5", "g6"})
 
     def test_inkstone_packager_excludes_human_data_and_model_artifacts(self):
         with tempfile.TemporaryDirectory() as temp:

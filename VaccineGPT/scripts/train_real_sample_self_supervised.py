@@ -25,34 +25,71 @@ AMINO_ACIDS = "ACDEFGHIKLMNPQRSTVWY"
 TOKEN_INDEX = {residue: index for index, residue in enumerate(AMINO_ACIDS)}
 
 
-def split_by_exact_sequence(
+def split_by_group(
     records: list[dict[str, Any]], seed: int
-) -> dict[str, list[dict[str, Any]]]:
-    groups: dict[str, dict[str, Any]] = {}
+) -> tuple[dict[str, list[dict[str, Any]]], str]:
+    groups: dict[str, list[dict[str, Any]]] = {}
+    parent: dict[str, str] = {}
+    sequence_owner: dict[str, str] = {}
+
+    def find(group_id: str) -> str:
+        parent.setdefault(group_id, group_id)
+        while parent[group_id] != group_id:
+            parent[group_id] = parent[parent[group_id]]
+            group_id = parent[group_id]
+        return group_id
+
+    def union(left: str, right: str) -> None:
+        left_root, right_root = find(left), find(right)
+        if left_root != right_root:
+            parent[right_root] = left_root
+
     for row in records:
         sequence = str(row.get("sequence") or row.get("protein_sequence") or "")
         if not sequence:
             raise ValueError(f"{row.get('gene_id')}: missing normalized sequence")
         digest = str(row.get("sequence_sha256") or hashlib.sha256(sequence.encode("ascii")).hexdigest())
-        if digest in groups and groups[digest]["sequence"] != sequence:
-            raise ValueError(f"hash collision or inconsistent exact-sequence group: {digest}")
-        groups[digest] = {**row, "sequence": sequence, "sequence_sha256": digest}
+        group_id = str(
+            row.get("split_group_id")
+            or row.get("genome_id")
+            or row.get("group_id")
+            or digest
+        )
+        find(group_id)
+        if digest in sequence_owner:
+            union(group_id, sequence_owner[digest])
+        else:
+            sequence_owner[digest] = group_id
+        groups.setdefault(group_id, []).append(
+            {**row, "sequence": sequence, "sequence_sha256": digest}
+        )
+    merged_groups: dict[str, list[dict[str, Any]]] = {}
+    for group_id, members in groups.items():
+        merged_groups.setdefault(find(group_id), []).extend(members)
     ordered = sorted(
-        groups.values(),
+        merged_groups.values(),
         key=lambda row: hashlib.sha256(
-            f"{seed}:{row['sequence_sha256']}".encode("ascii")
+            f"{seed}:{row[0]['sequence_sha256']}".encode("ascii")
         ).hexdigest(),
     )
     n = len(ordered)
-    if n < 30:
-        raise ValueError("at least 30 unique sequences are required for train/validation/test")
-    train_end = int(n * 0.70)
-    valid_end = int(n * 0.85)
-    return {
-        "train": ordered[:train_end],
-        "validation": ordered[train_end:valid_end],
-        "test": ordered[valid_end:],
-    }
+    if n < 3:
+        raise ValueError("at least 3 independent groups are required for train/validation/test")
+    train_end = max(1, min(int(n * 0.70), n - 2))
+    valid_end = max(train_end + 1, min(int(n * 0.85), n - 1))
+    method = (
+        "provided split_group_id"
+        if all(row.get("split_group_id") for row in records)
+        else "genome_id/group_id fallback; MMseqs2 homology leakage not controlled"
+    )
+    return (
+        {
+            "train": [row for group in ordered[:train_end] for row in group],
+            "validation": [row for group in ordered[train_end:valid_end] for row in group],
+            "test": [row for group in ordered[valid_end:] for row in group],
+        },
+        method,
+    )
 
 
 def crop_pair(
@@ -185,7 +222,7 @@ def train(
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"refusing to overwrite non-empty training output: {output_dir}")
     records = list(read_jsonl(sample_path))
-    splits = split_by_exact_sequence(records, seed)
+    splits, split_method = split_by_group(records, seed)
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
@@ -262,9 +299,15 @@ def train(
         raise RuntimeError("training did not produce a finite validation checkpoint")
     model.load_state_dict(best_state)
     output_dir.mkdir(parents=True, exist_ok=True)
-    train_ids = {row["sequence_sha256"] for row in splits["train"]}
-    valid_ids = {row["sequence_sha256"] for row in splits["validation"]}
-    test_ids = {row["sequence_sha256"] for row in splits["test"]}
+    group_key = lambda row: str(
+        row.get("split_group_id")
+        or row.get("genome_id")
+        or row.get("group_id")
+        or row["sequence_sha256"]
+    )
+    train_ids = {group_key(row) for row in splits["train"]}
+    valid_ids = {group_key(row) for row in splits["validation"]}
+    test_ids = {group_key(row) for row in splits["test"]}
     if train_ids & valid_ids or train_ids & test_ids or valid_ids & test_ids:
         raise RuntimeError("exact sequence leakage detected across splits")
     checkpoint_path = output_dir / "m1_real_sample_self_supervised.pt"
@@ -274,10 +317,10 @@ def train(
             "architecture": "full-M1-CLEF-style-encoder-plus-GCE-over-real-protein-onehot",
             "training_objective": "two-stochastic-crops-of-same-sequence-InfoNCE",
             "pretrained_weights_used": False,
-            "split_method": "deterministic exact sequence SHA256 groups",
-            "train_sequence_hashes": sorted(train_ids),
-            "validation_sequence_hashes": sorted(valid_ids),
-            "test_sequence_hashes": sorted(test_ids),
+            "split_method": split_method,
+            "train_group_ids": sorted(train_ids),
+            "validation_group_ids": sorted(valid_ids),
+            "test_group_ids": sorted(test_ids),
         },
         checkpoint_path,
     )
@@ -302,7 +345,7 @@ def train(
         "sample_count": len(records),
         "unique_exact_sequences": len(train_ids | valid_ids | test_ids),
         "split_sizes": {key: len(value) for key, value in splits.items()},
-        "split_method": "stable hash of exact normalized sequence; homology leakage not controlled",
+        "split_method": split_method,
         "training_target": "self-supervised sequence-view agreement only",
         "not_used_as_targets": ["VFDB membership", "IEDB peptide assay labels", "EIB202 H1-H4 labels"],
         "feature_backend": "amino-acid one-hot; no pretrained ESM-3/CLEF weights",
@@ -332,6 +375,25 @@ def train(
             "target-specific E1/E2 validation set are required before adjusting H1-H4."
         ),
     }
+    (output_dir / "split_manifest.json").write_text(
+        json.dumps(
+            {
+                "schema_version": "vaccinegpt-self-supervised-split-1.0",
+                "seed": seed,
+                "method": split_method,
+                "groups": {
+                    "train": sorted(train_ids),
+                    "validation": sorted(valid_ids),
+                    "test": sorted(test_ids),
+                },
+                "record_counts": {key: len(value) for key, value in splits.items()},
+                "leakage_check": "passed",
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     (output_dir / "training_report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -342,17 +404,30 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run leakage-controlled self-supervised training on real protein sequences."
     )
-    parser.add_argument("--sample-jsonl", type=Path, required=True)
+    input_group = parser.add_mutually_exclusive_group(required=True)
+    input_group.add_argument("--sample-jsonl", type=Path)
+    input_group.add_argument(
+        "--dataset-root",
+        type=Path,
+        help="uploaded dataset root; discovers processed/refseq_training/sequences.jsonl",
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=20261007)
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
     args = parser.parse_args()
+    sample_jsonl = args.sample_jsonl
+    if args.dataset_root is not None:
+        sample_jsonl = (
+            args.dataset_root / "processed" / "refseq_training" / "sequences.jsonl"
+        )
+    if sample_jsonl is None or not sample_jsonl.is_file():
+        raise FileNotFoundError(f"protein sequence JSONL not found: {sample_jsonl}")
     print(
         json.dumps(
             train(
-                args.sample_jsonl,
+                sample_jsonl,
                 args.output_dir,
                 args.seed,
                 args.epochs,
