@@ -66,9 +66,66 @@ from scripts import predict_clef_effectors
 from scripts import extract_esm2_embeddings
 from scripts.package_inkstone_dataset import SOURCE_PATHS, package_dataset
 from scripts.train_m1_contrastive import validate_esm3_cache_contract
+from scripts.process_eib202_h1 import process as process_eib202_h1
 
 
 class ArchitectureTests(unittest.TestCase):
+    def test_eib202_h1_audit_keeps_raw_reads_out_of_gold_labels(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            response = root / "raw" / "public_training_sources" / "source_responses"
+            response.mkdir(parents=True)
+            (response / "ena_PRJNA480066_test.tsv").write_text(
+                "run_accession\tfastq_ftp\tfastq_md5\tfastq_bytes\tlibrary_strategy\t"
+                "experiment_title\tstudy_title\tsample_accession\n"
+                "SRR1\t-\t-\t1\tTn-Seq\tTIS in 16oC seawater\tstudy\tS1\n",
+                encoding="utf-8",
+            )
+            output = root / "processed" / "h1"
+            report = process_eib202_h1(root, output)
+            self.assertFalse(report["training_ready"])
+            self.assertEqual(report["gene_effect_record_count"], 0)
+            self.assertTrue(
+                json.loads((output / "h1_sample_manifest.jsonl").read_text(encoding="utf-8").splitlines()[0])[
+                    "metadata_status"
+                ]
+                == "condition_inferred_from_title"
+            )
+
+    def test_eib202_h1_gate_requires_qc_mapping_control_and_replicates(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            response = root / "raw" / "public_training_sources" / "source_responses"
+            response.mkdir(parents=True)
+            (response / "ena_PRJNA480066_test.tsv").write_text(
+                "run_accession\tfastq_ftp\tfastq_md5\tfastq_bytes\tlibrary_strategy\t"
+                "experiment_title\tstudy_title\tsample_accession\n"
+                "SRR1\t-\t-\t1\tTn-Seq\tTIS in 16oC seawater\tstudy\tS1\n",
+                encoding="utf-8",
+            )
+            effects = root / "effects.jsonl"
+            effects.write_text(
+                json.dumps(
+                    {
+                        "gene_id": "EIB202_gene_1",
+                        "study_accession": "PRJNA480066",
+                        "condition": "seawater_16C",
+                        "effect_size": -2.0,
+                        "qc_pass": True,
+                        "reference_mapped": True,
+                        "control_defined": True,
+                        "independent_replicates": 2,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            report = process_eib202_h1(root, root / "out", effects)
+            self.assertTrue(report["training_ready"])
+            record = json.loads((root / "out" / "h1_gene_evidence.jsonl").read_text(encoding="utf-8"))
+            self.assertEqual(record["evidence_level"], "E2")
+            self.assertTrue(record["training_eligible_as_gold"])
+
     def test_clef_encoder_classifier_and_strict_checkpoint_loading(self):
         encoder = CLEFSequenceEncoder(num_embeds=16, num_hiddens=8, max_length=8)
         batch = {
