@@ -1,0 +1,16 @@
+{
+  "target_taxon": "Edwardsiella piscicida",
+  "proteome": "data/raw/uniprot_episcicida_1263550.tsv",
+  "label_output": "data/processed/labels/gene_labels.jsonl",
+  "known_antigen_file": "data/processed/labels/known_antigens.csv",
+  "attenuation_evidence_file": "data/processed/labels/attenuation_evidence.csv",
+  "fitness_file": "data/processed/labels/fitness.csv",
+  "label_schema_version": "lavnet-labels-1.0",
+  "rules": {
+    "unknown_is_negative": false,
+    "known_antigen_is_hard_exclusion": true,
+    "in_vivo_depletion_is_training_positive": true,
+    "in_vitro_essentiality_is_hard_exclusion": true
+  }
+}
+

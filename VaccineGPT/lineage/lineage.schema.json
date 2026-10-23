@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VaccineGPT artifact lineage",
+  "type": "object",
+  "required": ["model_version", "feature_version", "label_version", "batch_id"],
+  "properties": {
+    "model_version": {"type": "string"},
+    "feature_version": {"type": "string"},
+    "label_version": {"type": "string"},
+    "batch_id": {"type": "string"}
+  },
+  "additionalProperties": true
+}

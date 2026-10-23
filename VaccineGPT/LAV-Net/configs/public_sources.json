@@ -1,0 +1,138 @@
+{
+  "project": "LAV-Net",
+  "target_taxon": {
+    "name": "Edwardsiella piscicida",
+    "taxon_id": "1263550"
+  },
+  "sources": [
+    {
+      "id": "eib202_tnseq_prjna390582",
+      "kind": "ena_metadata",
+      "accession": "PRJNA390582",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA390582&fields=run_accession%2Csample_accession%2Cexperiment_accession%2Cfastq_ftp%2Cfastq_md5%2Cfastq_bytes%2Clibrary_strategy%2Cstudy_accession&format=tsv",
+      "output": "ena_PRJNA390582_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "primary in-vivo Tn-seq metadata",
+      "raw_reads": true
+    },
+    {
+      "id": "crispri_prjna1113837",
+      "kind": "ena_metadata",
+      "accession": "PRJNA1113837",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA1113837&fields=run_accession%2Csample_accession%2Cexperiment_accession%2Cfastq_ftp%2Cfastq_md5%2Cfastq_bytes%2Clibrary_strategy%2Cstudy_accession&format=tsv",
+      "output": "ena_PRJNA1113837_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "CRISPRi in-vivo/in-vitro supplement",
+      "raw_reads": true
+    },
+    {
+      "id": "tnseq_prjna1451832",
+      "kind": "ena_metadata",
+      "accession": "PRJNA1451832",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA1451832&format=tsv",
+      "output": "stage1_manifests/PRJNA1451832_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "in-vivo Tn-seq expansion",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "tnseq_prjna872296",
+      "kind": "ena_metadata",
+      "accession": "PRJNA872296",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA872296&format=tsv",
+      "output": "stage1_manifests/PRJNA872296_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "in-vitro stress Tn-seq axis",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "tnseq_prjna1051295",
+      "kind": "ena_metadata",
+      "accession": "PRJNA1051295",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA1051295&format=tsv",
+      "output": "stage1_manifests/PRJNA1051295_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "organic-acid stress axis",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "tnseq_prjna1079515",
+      "kind": "ena_metadata",
+      "accession": "PRJNA1079515",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA1079515&format=tsv",
+      "output": "stage1_manifests/PRJNA1079515_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "phosphate and lipid-droplet conditions",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "tnseq_prjna1082880",
+      "kind": "ena_metadata",
+      "accession": "PRJNA1082880",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA1082880&format=tsv",
+      "output": "stage1_manifests/PRJNA1082880_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "DMEM and low-glucose conditions",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "tnseq_prjna480066",
+      "kind": "ena_metadata",
+      "accession": "PRJNA480066",
+      "url": "https://www.ebi.ac.uk/ena/portal/api/search?result=read_run&query=study_accession%3DPRJNA480066&format=tsv",
+      "output": "stage1_manifests/PRJNA480066_tnseq_runs.tsv",
+      "access_state": "open_full_text",
+      "role": "temperature and seawater environment axis",
+      "raw_reads": true,
+      "filter": "library_strategy=Tn-Seq"
+    },
+    {
+      "id": "uniclust30_2022_02_hhsuite",
+      "kind": "evolution_database",
+      "url": "https://wwwuser.gwdg.de/~compbiol/uniclust/2022_02/UniRef30_2022_02_hhsuite.tar.gz",
+      "output": "msa_db/UniRef30_2022_02_hhsuite.tar.gz",
+      "access_state": "open_full_text",
+      "role": "highest-tier evolutionary MSA database",
+      "license": "CC BY-SA 4.0",
+      "size_bytes": 61897526903,
+      "format": "HH-suite A3M alignments and support files"
+    },
+    {
+      "id": "episcicida_uniprot_proteome",
+      "kind": "uniprot_search",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=taxonomy_id%3A1263550&format=tsv&size=500&fields=accession%2Cid%2Cgene_names%2Cprotein_name%2Clength%2Csequence%2Corganism_name",
+      "output": "uniprot_episcicida_1263550.tsv",
+      "access_state": "open_full_text",
+      "role": "target proteome"
+    },
+    {
+      "id": "iedb_epitopes",
+      "kind": "http",
+      "url": "https://query-api.iedb.org/epitope_search",
+      "output": "iedb_epitope_search.json",
+      "access_state": "publisher_landing_page",
+      "role": "immunogenicity evidence; endpoint may require provider query parameters"
+    },
+    {
+      "id": "vfdb_set_a",
+      "kind": "http",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFDB_setA_pro.fas.gz",
+      "output": "VFDB_setA_pro.fas.gz",
+      "access_state": "open_full_text",
+      "role": "virulence-factor reference"
+    },
+    {
+      "id": "vfdb_annotations",
+      "kind": "http",
+      "url": "https://www.mgc.ac.cn/VFs/Down/VFs.xls.gz",
+      "output": "VFs.xls.gz",
+      "access_state": "open_full_text",
+      "role": "virulence-factor annotations"
+    }
+  ]
+}

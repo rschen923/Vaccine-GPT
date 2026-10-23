@@ -1,0 +1,112 @@
+{
+  "schema_version": "vaccinegpt-campaign-final-261007-1.0",
+  "retrieval_date": "2026-10-07",
+  "literature": {
+    "rounds": 10,
+    "full_text_references_per_round": {
+      "1": 200,
+      "2": 200,
+      "3": 200,
+      "4": 200,
+      "5": 200,
+      "6": 200,
+      "7": 200,
+      "8": 200,
+      "9": 200,
+      "10": 200
+    },
+    "round_references_total": 2000,
+    "unique_works_after_identifier_dedup": 1806,
+    "fulltext_xml_integrity_verified": 2000,
+    "fulltext_integrity_errors": 0,
+    "raw_query_snapshots": 10,
+    "raw_search_response_sha256_in_query_manifest": true,
+    "manual_random_review_sample": 100,
+    "manually_reviewed_sample_records": 90,
+    "sample_blocked_rounds": [
+      5
+    ],
+    "full_corpus_manually_reviewed": false,
+    "limitation": "The 2,000 round references are retrieved OA fullTextXML items with verified hashes, not 2,000 human full-text reviews. AI subagents reviewed selected excerpts for 90 random round-reference rows (89 unique campaign works); four earlier-reviewed campaign works were outside that random sample and two earlier-reviewed arXiv works are outside the campaign, giving 93 campaign works and 95 unique works overall with selected-section review. Round 5 was blocked by a safety filter. The other 1,713 unique campaign works have not had individual claim-level review.",
+    "strict_query_snapshots": 10,
+    "raw_search_response_persisted_before_parse": true,
+    "existing_200_references_present_in_strict_snapshot": {
+      "1": 200,
+      "2": 200,
+      "3": 200,
+      "4": 200,
+      "5": 200,
+      "6": 200,
+      "7": 200,
+      "8": 200,
+      "9": 200,
+      "10": 200
+    },
+    "manual_review_sampled_records": 100,
+    "manual_reviewed_sample_records": 90,
+    "manual_review_blocked_sample_records": 10,
+    "manual_reviewed_rounds": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "manual_review_blocked_rounds": [
+      5
+    ],
+    "manual_full_corpus_review": false,
+    "review_method": "AI-assisted review of selected full-text sections; not human manual review",
+    "random_packet_reference_rows_reviewed": 90,
+    "random_packet_unique_pmcid_works_reviewed": 89,
+    "previously_reviewed_fulltext_sources": 6,
+    "previously_reviewed_sources_overlapping_campaign": 4,
+    "previously_reviewed_arxiv_sources_outside_campaign": 2,
+    "unique_work_count_with_selected_section_review": 95,
+    "human_full_corpus_review": false,
+    "deduplicated_works_without_selected_section_review": 1713,
+    "blocked_round5_packet_rows": 10,
+    "blocked_reason": "Safety filter blocked the Round 5 paper-review task; no alternate route used.",
+    "previously_reviewed_sources_overlapping_campaign_outside_random_sample": 4,
+    "campaign_unique_works_with_selected_section_review": 93,
+    "legacy_manual_review_field_semantics": "Historical field names; counts denote AI-assisted review of selected sections, not human manual full-text review."
+  },
+  "code": {
+    "rounds": 10,
+    "round_repository_references": 202,
+    "unique_public_repositories": 192,
+    "per_round_counts": {
+      "1": 20,
+      "2": 20,
+      "3": 20,
+      "4": 20,
+      "5": 20,
+      "6": 20,
+      "7": 20,
+      "8": 20,
+      "9": 22,
+      "10": 20
+    },
+    "all_round_minimum_20_met": true,
+    "license_and_source_paths_recorded": true,
+    "iteration_report_files": 10
+  },
+  "models": {
+    "real_sequence_self_supervised_m1_gce_training": true,
+    "target_specific_supervised_m2_training": false,
+    "esm2_esm3_evo2_inference": false,
+    "biological_target_validation": false
+  },
+  "manual_review_claims": {
+    "human_manual_review": false,
+    "AI_assisted_section_review_works": 95,
+    "all_1806_fulltexts_fully_reviewed": false,
+    "claims_from_unreviewed_works_must_remain_pending": true,
+    "campaign_works_with_selected_section_review": 93,
+    "campaign_works_without_selected_section_review": 1713
+  }
+}

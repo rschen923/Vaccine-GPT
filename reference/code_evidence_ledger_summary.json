@@ -1,0 +1,23 @@
+{
+  "schema_version": "vaccinegpt-code-evidence-ledger-1.0",
+  "round_counts": {
+    "1": 20,
+    "2": 20,
+    "3": 20,
+    "4": 20,
+    "5": 20,
+    "6": 20,
+    "7": 20,
+    "8": 20,
+    "9": 22,
+    "10": 20
+  },
+  "round_reference_total": 202,
+  "globally_unique_repositories": 192,
+  "duplicate_references_across_rounds": 10,
+  "quota_target_per_round": 20,
+  "all_round_quotas_met": true,
+  "parse_errors": [],
+  "output": "reference\\code_evidence_ledger_261007.jsonl",
+  "output_sha256": "9e905e8d5b79e201a9f46ab0fc522ee41a2a3bf7a26263b9abbee445c5865052"
+}

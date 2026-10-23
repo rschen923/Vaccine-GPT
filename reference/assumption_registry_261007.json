@@ -1,0 +1,102 @@
+{
+  "schema_version": "vaccinegpt-assumptions-1.0",
+  "status": "initial_registry_not_ten_rounds_of_literature_validation",
+  "assumptions": [
+    {
+      "id": "A-ESM2-v1",
+      "default": "frozen esm2_t33_650M_UR50D residue representation; 1280 dimensions",
+      "class": "upstream_model_choice",
+      "trigger": "checkpoint unavailable, hash mismatch, model-version drift, or target-domain performance gate failure",
+      "alternative": "stop biological inference; separately benchmark a smaller/open protein encoder and record it as a different model version",
+      "sensitivity": "compare model size and pooling on a held-out homology-cluster split"
+    },
+    {
+      "id": "A-LEN-256",
+      "default": "truncate protein sequence to 256 residues",
+      "class": "representation_boundary",
+      "trigger": "long proteins or known domain/motif evidence beyond residue 256",
+      "alternative": "pre-registered overlapping-window aggregation with explicit coverage mask; never silently use a different window",
+      "sensitivity": "report 128/256/512 residue-window ablation when hardware permits"
+    },
+    {
+      "id": "A-TAU-01",
+      "default": "InfoNCE temperature 0.1",
+      "class": "project_initial_value_not_a_CLEF_verified_default",
+      "trigger": "alignment collapse, batch-size change, or no improvement on validation loss",
+      "alternative": "pre-register a bounded temperature sweep around 0.1 and report all values",
+      "sensitivity": "0.08/0.10/0.12"
+    },
+    {
+      "id": "A-PRIVATE-MASK",
+      "default": "missing omics/ECP features are masked and never interpreted as measured zero",
+      "class": "data_contract",
+      "trigger": "missingness mask absent or feature vector has non-finite values",
+      "alternative": "exclude that modality for the record and mark it unavailable",
+      "sensitivity": "compare complete-case and mask-aware evaluation without imputing observed values"
+    },
+    {
+      "id": "A-PUBLIC-EVIDENCE",
+      "default": "public source membership without row-level assay/reference/target organism maps to E4 weak supervision",
+      "class": "provenance_policy",
+      "trigger": "primary reference, assay, or target-organism metadata is later recovered",
+      "alternative": "manually re-screen the exact row, retain the previous tier in history, and promote only the supported evidence row",
+      "sensitivity": "no numerical sensitivity; evidence-level transition requires provenance"
+    },
+    {
+      "id": "A-NEGATIVE-LABEL",
+      "default": "unlabeled is not negative; explicit assay-negative is kept separately",
+      "class": "label_semantics",
+      "trigger": "a data source declares an explicit negative assay result and its assay metadata",
+      "alternative": "add a distinct evidence row with source, assay, reference, and conditions",
+      "sensitivity": "report positive/unlabeled and explicit negative counts separately"
+    },
+    {
+      "id": "A-ID-RECOVERY",
+      "default": "repair truncated source identifiers only by a unique exact normalized-sequence match",
+      "class": "identity",
+      "trigger": "zero or multiple raw-source sequence matches",
+      "alternative": "retain original ID, quarantine for manual resolution, and never pick a near-match automatically",
+      "sensitivity": "sequence identity is exact only; homology is not accepted as ID proof"
+    },
+    {
+      "id": "A-LEAK-SPLIT",
+      "default": "supervised training requires MMseqs2 90%-identity cluster provenance",
+      "class": "evaluation",
+      "trigger": "MMseqs2 missing, group ID unknown, or cluster crosses split boundaries",
+      "alternative": "block supervised training/evaluation; do not substitute random row split",
+      "sensitivity": "compare identity thresholds only after they are pre-registered"
+    },
+    {
+      "id": "A-H2-RET",
+      "default": "Ret is unavailable if H2 antigen score, graph, or centrality evidence is missing",
+      "class": "decision_core",
+      "trigger": "required H2/edge inputs fail quality or provenance gates",
+      "alternative": "return null and keep gene unranked, rather than substitute zero",
+      "sensitivity": "change lambda/edge threshold only with a versioned ±20% analysis"
+    },
+    {
+      "id": "A-UNTRAINED-MODEL",
+      "default": "random or unvalidated M1/M2 heads produce unranked AEP rows only",
+      "class": "safety_gate",
+      "trigger": "checkpoint hash missing or G-A/G-B/G-C/G-leak/G-safe/G-grade not passed",
+      "alternative": "stop ranking and emit unknown fields plus blocking reasons",
+      "sensitivity": "none; this is a hard operational gate"
+    },
+    {
+      "id": "A-ESM3-OPTIONAL",
+      "default": "ESM-3 is an optional comparator, not a protective-antigen classifier",
+      "class": "model_scope",
+      "trigger": "local open weights/API runtime, permitted use terms, and benchmark are available",
+      "alternative": "keep disabled and continue v1 with ESM-2",
+      "sensitivity": "compare frozen embeddings using the same target-specific cluster split"
+    },
+    {
+      "id": "A-EVO2-V2",
+      "default": "Evo 2 is an optional v2 DNA-window backbone and not executed on Windows CPU",
+      "class": "runtime",
+      "trigger": "supported Linux/WSL2 CUDA environment and exact checkpoint become available",
+      "alternative": "keep v2 scaffold and v1 protein track; do not substitute a protein model for DNA",
+      "sensitivity": "evaluate checkpoint/context-length choice on target-genome holdouts"
+    }
+  ]
+}

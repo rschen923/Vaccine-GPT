@@ -1,0 +1,8 @@
+model_version: VaccineGPT-v1-dev
+feature_version: FEAT-v1-1.0
+label_version: LABEL-evidence-1.0
+batch_id: REPLACE_WITH_BATCH_ID
+compatibility: schema_only_not_biologically_validated
+notes:
+  - "Replace batch_id with a real immutable data/run batch identifier before creating lineage-tagged artifacts."
+  - "No compatibility claim implies biological validity or target-specific performance."

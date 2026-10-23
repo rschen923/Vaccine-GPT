@@ -1,0 +1,6 @@
+{
+  "model_version": "VaccineGPT-v1-dev",
+  "feature_version": "FEAT-v1-1.0",
+  "label_version": "LABEL-evidence-1.0",
+  "batch_id": "REPLACE_WITH_BATCH_ID"
+}
