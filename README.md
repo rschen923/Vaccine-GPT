@@ -223,7 +223,7 @@ gene/product | Att interval | Ret | Safe | evidence E1–E4 | three-reader | mec
 | Item | Status | Reason |
 |---|---|---|
 | v1 rejects DNA input | ✅ Code contract enforced | M1 receives residue embeddings; UDC feature contract blocks DNA |
-| M1/GCE/M2 tensor contracts | ✅ Smoke tested | 20 unit + synthetic forward passes pass |
+| M1/GCE/M2 tensor contracts | ✅ Smoke tested | 38 unit + synthetic forward passes pass |
 | 1,000 real protein records through pipeline | ✅ Engineering pass | One-hot self-supervised M1 trained; M2 forward works; 1,000 rows remain `unranked` |
 | AEP four-piece set with unknown states | ✅ Schema ready | M2 has no E1/E2 gold training; gates keep all rows `unranked` |
 | G-A/B/C/D, A1–A9 validation | ❌ Not verified | No formal CLEF reproduced metrics, EIB202 anchors, blind/cali sets |
@@ -249,7 +249,7 @@ See `reference/iterations_261007/` for per-round dossiers and manual review logs
 
 ## License
 
-- **Main code:** Repository-specific license (see LICENSE file)
+- **Main code:** Repository-specific license (LICENSE file to be added)
 - **CLEF third-party code:** MIT (see `third_party/CLEF_LICENSE.txt`)
 - **Foundation model checkpoints:** Subject to individual model licenses (ESM-2: Apache 2.0; Evo2: see Arc Institute terms)
 - **Model predictions are NOT experimental evidence** — they are computational hypotheses requiring wet-lab validation.
